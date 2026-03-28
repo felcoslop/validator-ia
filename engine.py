@@ -525,9 +525,9 @@ def _compute_final_score(results):
     final_score = weighted_sum / max(total_weight, 0.01)
     
     # DL-Heuristic Consensus Boost:
-    # When DL is moderately suspicious (>25%) AND heuristics agree, boost strongly
-    if dl_score is not None and dl_score > 25 and high_signals >= 2:
-        boost = min(40, high_signals * 8 + (dl_score - 25) * 0.5)
+    # When DL is suspicious (>35%) AND heuristics agree, boost moderately
+    if dl_score is not None and dl_score > 35 and high_signals >= 3:
+        boost = min(30, high_signals * 6 + (dl_score - 35) * 0.4)
         final_score += boost
     
     # If DL is very confident (>70%), trust it heavily
@@ -575,8 +575,8 @@ def _compute_final_score_video(results):
     final_score = weighted_sum / max(total_weight, 0.01)
     
     # DL-Heuristic Consensus Boost (same logic as image pipeline)
-    if dl_score is not None and dl_score > 25 and high_signals >= 2:
-        boost = min(40, high_signals * 8 + (dl_score - 25) * 0.5)
+    if dl_score is not None and dl_score > 35 and high_signals >= 3:
+        boost = min(30, high_signals * 6 + (dl_score - 35) * 0.4)
         final_score += boost
     
     # If DL is very confident (>70%), trust it heavily
