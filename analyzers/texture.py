@@ -43,33 +43,43 @@ def analyze(image_np):
     score = 0
 
     # Micro-texture (strongest differentiator for AI photos)
-    if micro_score > 0.85:
-        score += 20
-    elif micro_score > 0.7:
-        score += 10
+    if micro_score > 0.7:
+        score += 30
+    elif micro_score > 0.5:
+        score += 22
+    elif micro_score > 0.3:
+        score += 12
 
     # Laplacian sharpness distribution
-    if lap_score > 0.75:
-        score += 15
-    elif lap_score > 0.5:
-        score += 8
+    if lap_score > 0.6:
+        score += 20
+    elif lap_score > 0.3:
+        score += 12
+    elif lap_score > 0.15:
+        score += 5
 
     # Color correlation  
-    if color_score > 0.8:
-        score += 15
-    elif color_score > 0.6:
-        score += 8
+    if color_score > 0.7:
+        score += 20
+    elif color_score > 0.4:
+        score += 12
+    elif color_score > 0.2:
+        score += 5
 
     # LBP uniformity
-    if lbp_score > 0.8:
-        score += 10
+    if lbp_score > 0.6:
+        score += 15
+    elif lbp_score > 0.3:
+        score += 8
 
     # DCT analysis  
-    score += min(10, int(dct_score * 10))
+    score += min(10, int(dct_score * 15))
 
     # Patch consistency
-    if patch_score > 0.8:
-        score += 10
+    if patch_score > 0.6:
+        score += 15
+    elif patch_score > 0.3:
+        score += 8
 
     score = min(100, max(0, score))
 

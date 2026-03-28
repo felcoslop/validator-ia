@@ -62,31 +62,43 @@ def analyze(image_np):
     score = 0
 
     # High variance in ELA suggests mixed content
-    if cv_ela > 3.0:
+    if cv_ela > 2.0:
+        score += 25
+    elif cv_ela > 1.0:
         score += 15
-    elif cv_ela > 2.0:
-        score += 8
+    elif cv_ela > 0.5:
+        score += 5
 
     # Block-level inconsistency
-    if block_std > 8.0:
+    if block_std > 5.0:
+        score += 20
+    elif block_std > 2.0:
         score += 10
 
     # Very low mean ELA = AI-generated (diffusion models have extremely clean output)
-    if mean_ela < 0.2:
-        score += 20
-    elif mean_ela < 0.5:
-        score += 10
+    if mean_ela < 0.5:
+        score += 40  # Very strong AI signal
+    elif mean_ela < 1.0:
+        score += 30  # Strong AI signal
+    elif mean_ela < 2.0:
+        score += 20  # Suspicious
+    elif mean_ela < 3.0:
+        score += 10  # Mildly suspicious
+    elif mean_ela > 15.0:
+        score += 5   # Over-compressed
 
     # Large range in block means
-    if block_range > 30.0:
-        score += 10
+    if block_range > 20.0:
+        score += 15
+    elif block_range > 10.0:
+        score += 8
 
     # AI-generated images have characteristic uniform ELA patterns
     uniform_ratio = np.sum(block_means < mean_ela * 0.3) / len(block_means)
-    if uniform_ratio > 0.6:
+    if uniform_ratio > 0.3:
+        score += 25
+    elif uniform_ratio > 0.15:
         score += 15
-    elif uniform_ratio > 0.4:
-        score += 8
 
     score = min(100, max(0, score))
 

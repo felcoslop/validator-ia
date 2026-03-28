@@ -543,21 +543,54 @@ def _compute_final_score(results, width=None, height=None):
         elif score > 40:
             high_signals += 1
 
-    final_score = weighted_sum / max(total_weight, 0.01)
+    # NEW: Smart EXIF physics mitigation
+    # Heavily compressed JPEGs mimic AI by averaging out high-frequencies and natural noise.
+    # If the image was exported directly from a camera hardware (valid EXIF), we mitigate
+    # these physics artifacts to prevent false positive AI accusations. Screenshots and PNGs 
+    # receive full unbridled AI strictness.
+    import re
+    meta_res = next((r for r in results if r.get('name') in ['metadata', 'Análise de Metadados (EXIF)']), None)
+    safe_exif = (meta_res is not None and meta_res.get('score', 100) < 15)
     
-    # DL-Heuristic Consensus Boost:
-    # When DL is suspicious (>35%) AND heuristics agree, boost moderately
-    if dl_score is not None and dl_score > 35 and high_signals >= 3:
-        boost = min(30, high_signals * 6 + (dl_score - 35) * 0.4)
-        final_score += boost
-    
-    # If DL is very confident (>70%), trust it heavily
-    if dl_score is not None and dl_score > 70:
-        final_score = max(final_score, dl_score * 0.9)
-    
-    # If DL says it's real (<10%), cap the final score
-    if dl_score is not None and dl_score < 10:
-        final_score = min(final_score, 25)
+    is_social_or_screenshot = False
+    # To reliably catch screenshots passed into _analyze_image, engine's pipeline passes full file path
+    # But _compute_final_score receives results. Wait, this function doesn't receive file_path!
+    # Let's search inside the metadata results for filename clues if needed.
+    # Actually, metadata analyzer saves filename in some cases.
+    # But usually, if EXIF is safe (score < 15), it implies software like Photoshop/Camera generated it.
+    # Screenshots and Whatsapp strip EXIF, making safe_exif False inherently!
+    if safe_exif:
+        for r in results:
+            if r.get('name') not in ['dl_classifier', 'metadata', 'Classificador Neural (DL)', 'Análise de Metadados (EXIF)']:
+                if r.get('score', 0) >= 30:
+                    r['score'] = min(int(r['score'] * 0.45), 28)
+                    r['details']['findings'] = [{'key': 'finding_compression_mitigated'}]
+
+    # Re-calculate legacy average upfront for dynamic weighting.
+    # We take the top 3 strongest AI signals as the representative physics score.
+    legacy_modules = [r['score'] for r in results if r.get('name') not in ['dl_classifier', 'metadata', 'Classificador Neural (DL)', 'Análise de Metadados (EXIF)']]
+    if len(legacy_modules) >= 3:
+        top_modules = sorted(legacy_modules, reverse=True)
+        legacy_avg = sum(top_modules[:3]) / 3
+    else:
+        legacy_avg = sum(legacy_modules) / max(1, len(legacy_modules))
+
+    # Dynamic Weighting: 
+    # If the mathematical physics modules find undeniable structural evidence of AI 
+    # (legacy_avg > 50), they dynamically override an unsure DL classifier.
+    if dl_score is not None:
+        if legacy_avg >= 50 and dl_score < 50:
+            dl_weight = 0.15
+            legacy_weight = 0.85
+        else:
+            dl_weight = 0.45
+            legacy_weight = 0.55
+            
+        raw_final = (dl_score * dl_weight) + (legacy_avg * legacy_weight)
+    else:
+        raw_final = legacy_avg
+
+    final_score = raw_final
         
     return min(100, max(0, final_score))
 
@@ -616,23 +649,19 @@ def _compute_final_score_video(results, width=None, height=None):
     if is_low_res and final_score > 25:
         final_score -= 10
     
+
+    legacy_modules = [r['score'] for r in results if r.get('name') not in ['dl_classifier', 'metadata', 'Classificador Neural (DL)', 'Análise de Metadados (EXIF)']]
+    if len(legacy_modules) >= 3:
+        top_modules = sorted(legacy_modules, reverse=True)
+        legacy_avg = sum(top_modules[:3]) / 3
+    else:
+        legacy_avg = sum(legacy_modules) / max(1, len(legacy_modules))
+
     # If DL is very confident (>75%), trust it heavily, but less so on low-res
     if dl_score is not None and dl_score > 75:
         dl_trust = 0.85 if not is_low_res else 0.70
         final_score = max(final_score, dl_score * dl_trust)
     
-    # If DL says it's real (<40%), cap the final score and mitigate false positives
-    if dl_score is not None and dl_score < 40:
-        final_score = min(final_score, 25)
-        # Social media compression destroys noise and high frequencies, creating false 
-        # positives in legacy modules. Since DL is highly confident this is REAL,
-        # we mitigate these modules to prevent confusing findings.
-        for r in results:
-            if r.get('name') not in ['dl_classifier', 'metadata', 'Classificador Neural (DL)', 'Análise de Metadados (EXIF)']:
-                if r.get('score', 0) >= 30:
-                    r['score'] = min(r['score'], 28)
-                    r['details']['findings'] = [{'key': 'finding_compression_mitigated'}]
-                    
     return min(100, max(0, final_score))
 
 
