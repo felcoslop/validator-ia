@@ -39,4 +39,5 @@ EXPOSE 5000
 # -w 2: 2 workers
 # -b 0.0.0.0:5000: bind to all interfaces on port 5000
 # --timeout 120: allow long forensic processing
-CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app", "--timeout", "120"]
+# --preload: Loads the AI models into the master process ONCE, sharing memory to all workers (Saves 500MB RAM & fixes slow cold-starts)
+CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0:5000", "app:app", "--timeout", "120", "--preload"]
