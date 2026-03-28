@@ -538,7 +538,7 @@ def _compute_final_score(results, width=None, height=None):
         weighted_sum += score * w
         total_weight += w
         
-        if name == 'Classificador Neural (DL)':
+        if name in ['dl_classifier', 'Classificador Neural (DL)']:
             dl_score = score
         elif score > 40:
             high_signals += 1
@@ -578,10 +578,16 @@ def _compute_final_score(results, width=None, height=None):
     # Dynamic Weighting: 
     # If the mathematical physics modules find undeniable structural evidence of AI 
     # (legacy_avg > 50), they dynamically override an unsure DL classifier.
+    # HOWEVER, a raw OS screenshot of a real photo will functionally mimic AI physics
+    # (zero variance, grid alignment). If the DL text-model is ULTRA confident (< 15) 
+    # that the image content is a real human/scene, we trust it over the OS math artifacts.
     if dl_score is not None:
-        if legacy_avg >= 50 and dl_score < 50:
+        if legacy_avg >= 50 and 15 <= dl_score < 50:
             dl_weight = 0.15
             legacy_weight = 0.85
+        elif dl_score < 15:
+            dl_weight = 0.85
+            legacy_weight = 0.15
         else:
             dl_weight = 0.45
             legacy_weight = 0.55
@@ -624,10 +630,12 @@ def _compute_final_score_video(results, width=None, height=None):
         name = r.get('name', '')
         score = r.get('score', 50)
 
-        # Disregard compression-prone heuristics on low-res video
+        # Lighten compression-prone heuristics on low-res video instead of cutting them by 50%.
         if is_low_res and name in ['frequency', 'noise', 'hv_score', 'wavelet']:
-            score *= 0.5  # 50% discount for video context
-            r['score'] = score
+            # Max cap it softly so it doesn't cross 75 unless extreme, but don't blindly halve it.
+            if score > 40:
+                score = 40 + (score - 40) * 0.6
+                r['score'] = score
             
         w = video_weights.get(name, 0.05)
         weighted_sum += score * w
@@ -638,24 +646,30 @@ def _compute_final_score_video(results, width=None, height=None):
         elif score > 40:
             high_signals += 1
             
-    final_score = weighted_sum / max(total_weight, 0.01)
-    
-    # DL-Heuristic Consensus Boost (same logic as image pipeline)
-    if dl_score is not None and dl_score > 35 and high_signals >= 3:
-        boost = min(30, high_signals * 6 + (dl_score - 35) * 0.4)
-        final_score += boost
-    
-    # NEW: Low-fidelity safety factor (compression penalty)
-    if is_low_res and final_score > 25:
-        final_score -= 10
-    
-
-    legacy_modules = [r['score'] for r in results if r.get('name') not in ['dl_classifier', 'metadata', 'Classificador Neural (DL)', 'Análise de Metadados (EXIF)']]
+    # Calculate legacy physics average specifically for video (Top 3 strongest signals)
+    legacy_modules = [r['score'] for r in results if r.get('name') not in ['dl_classifier', 'temporal']]
     if len(legacy_modules) >= 3:
         top_modules = sorted(legacy_modules, reverse=True)
         legacy_avg = sum(top_modules[:3]) / 3
     else:
         legacy_avg = sum(legacy_modules) / max(1, len(legacy_modules))
+
+    # Dynamic Weighting (similar to images)
+    if dl_score is not None:
+        if legacy_avg >= 50 and 15 <= dl_score < 50:
+            final_score = (dl_score * 0.15) + (legacy_avg * 0.85)
+        elif dl_score < 15:
+            final_score = (dl_score * 0.85) + (legacy_avg * 0.15)
+        elif dl_score >= 70:
+            final_score = (dl_score * 0.70) + (legacy_avg * 0.30)
+        else:
+            final_score = (dl_score * 0.40) + (legacy_avg * 0.60)
+    else:
+        final_score = legacy_avg
+    
+    # NEW: Low-fidelity safety factor (compression penalty applied gently only if it struggles to be definitive)
+    if is_low_res and 25 < final_score < 60:
+        final_score -= 8
 
     # If DL is very confident (>75%), trust it heavily, but less so on low-res
     if dl_score is not None and dl_score > 75:
