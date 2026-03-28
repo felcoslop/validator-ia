@@ -108,7 +108,7 @@ def analyze_image(file_path, eval_id):
     except Exception as e:
         results.append(_error_result('metadata', str(e)))
 
-    final_score = _compute_final_score(results)
+    final_score = _compute_final_score(results, image_np.shape[1], image_np.shape[0])
     verdict = _generate_verdict(final_score, results)
 
     return {
@@ -271,7 +271,7 @@ def analyze_video(file_path, eval_id, selected_indices=None):
         'visualization': None,
     })
 
-    final_score = _compute_final_score_video(full_module_results)
+    final_score = _compute_final_score_video(full_module_results, width, height)
     verdict = _generate_verdict(final_score, full_module_results)
 
     return {
@@ -468,10 +468,11 @@ def _temporal_analysis(frame_scores, early_detected):
     score = mean_score
 
     # High variance between frames is suspicious for AI
-    if score_var > 200:
-        score += 10
+    # High variance between frames is often just video cuts/motion
+    if score_var > 400 and mean_score > 50:
+        score += 8
     # Very uniform scores across frames suggest batch generation
-    elif score_var < 5 and len(frame_scores) > 3:
+    elif score_var < 3 and len(frame_scores) > 5 and mean_score > 40:
         score += 5
 
     if early_detected:
@@ -503,8 +504,14 @@ def _temporal_findings(frame_scores, early_detected):
     return findings
 
 
-def _compute_final_score(results):
-    """Weighted average of module scores with DL-boosted consensus."""
+def _compute_final_score(results, width=None, height=None):
+    """Weighted average of module scores with DL-boosted consensus and resolution awareness."""
+    
+    # Low-res compression compensation (social media filter)
+    is_low_res = False
+    if width and height and min(width, height) < 600:
+        is_low_res = True
+        
     total_weight = 0
     weighted_sum = 0
     high_signals = 0
@@ -512,7 +519,14 @@ def _compute_final_score(results):
     
     for r in results:
         name = r.get('name', '')
-        score = r.get('score', 0)
+        score = r.get('score', 50)
+        
+        # Heuristics that are highly unreliable on low-res compressed media
+        if is_low_res and name in ['Análise de Frequência (FFT)', 'Análise de Ruído (PRNU)', 
+                                 'Score Horizontal/Vertical', 'Análise Wavelet (DWT)']:
+            score *= 0.6  # 40% discount on suspiciousness due to compression noise
+            r['score'] = score # Update for report
+            
         w = WEIGHTS.get(name, 0.05)
         weighted_sum += score * w
         total_weight += w
@@ -541,8 +555,14 @@ def _compute_final_score(results):
     return min(100, max(0, final_score))
 
 
-def _compute_final_score_video(results):
-    """Weighted score for video analysis with DL-boosted consensus."""
+def _compute_final_score_video(results, width=None, height=None):
+    """Weighted score for video analysis with DL-boosted consensus and compression awareness."""
+    
+    # Low-res compression compensation (social media filter)
+    is_low_res = False
+    if width and height and min(width, height) < 600:
+        is_low_res = True
+        
     video_weights = {
         'Classificador Neural (DL)': 0.35,
         'Análise de Textura (AI)': 0.08,
@@ -563,6 +583,13 @@ def _compute_final_score_video(results):
     for r in results:
         name = r.get('name', '')
         score = r.get('score', 50)
+
+        # Disregard compression-prone heuristics on low-res video
+        if is_low_res and name in ['Análise de Frequência (FFT)', 'Análise de Ruído (PRNU)', 
+                                 'Score Horizontal/Vertical', 'Análise Wavelet (DWT)']:
+            score *= 0.5  # 50% discount for video context (heavier compression)
+            r['score'] = score
+            
         w = video_weights.get(name, 0.05)
         weighted_sum += score * w
         total_weight += w
@@ -579,9 +606,14 @@ def _compute_final_score_video(results):
         boost = min(30, high_signals * 6 + (dl_score - 35) * 0.4)
         final_score += boost
     
-    # If DL is very confident (>70%), trust it heavily
-    if dl_score is not None and dl_score > 70:
-        final_score = max(final_score, dl_score * 0.9)
+    # NEW: Low-fidelity safety factor (compression penalty)
+    if is_low_res and final_score > 25:
+        final_score -= 10
+    
+    # If DL is very confident (>75%), trust it heavily, but less so on low-res
+    if dl_score is not None and dl_score > 75:
+        dl_trust = 0.85 if not is_low_res else 0.70
+        final_score = max(final_score, dl_score * dl_trust)
     
     # If DL says it's real (<10%), cap the final score
     if dl_score is not None and dl_score < 10:
@@ -592,11 +624,11 @@ def _compute_final_score_video(results):
 
 def _generate_verdict(score, results):
     """Generate verdict with label, color, and key findings — binary: AI or Real."""
-    if score >= 55:
+    if score >= 60:
         level, label, confidence, color = 'ai_high', 'Gerado por Inteligência Artificial', 'Alta', '#ef4444'
-    elif score >= 40:
+    elif score >= 45:
         level, label, confidence, color = 'ai_moderate', 'Provavelmente Gerado por IA', 'Moderada', '#f97316'
-    elif score >= 30:
+    elif score >= 35:
         level, label, confidence, color = 'ai_low', 'Indícios de Manipulação ou Geração por IA', 'Baixa', '#eab308'
     else:
         level, label, confidence, color = 'real', 'Autêntico / Real', 'Alta', '#22c55e'
