@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação {{ eval_id }} — ForensicAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- SVG Sprite -->
+    <svg style="display:none">
+        <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+        <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
+        <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+        <symbol id="icon-smartphone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></symbol>
+        <symbol id="icon-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+        
+        <!-- Module Icons -->
+        <symbol id="icon-chart-bar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></symbol>
+        <symbol id="icon-microscope" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/></symbol>
+        <symbol id="icon-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+        <symbol id="icon-waves" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></symbol>
+        <symbol id="icon-trending-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></symbol>
+        <symbol id="icon-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></symbol>
+        <symbol id="icon-search-mod" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+        <symbol id="icon-ruler" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3l-5.3 5.3c-.4.4-1 .4-1.4 0L4.7 10.7c-.4-.4-.4-1 0-1.4l5.3-5.3c.4-.4 1-.4 1.4 0l9.9 9.9c.4.4.4 1 0 1.4Z"/><path d="M7.5 10.5l2 2"/><path d="M10.5 7.5l2 2"/><path d="M13.5 11l2 2"/><path d="M16.5 14l2 2"/></symbol>
+        <symbol id="icon-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></symbol>
+        <symbol id="icon-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    </svg>
+
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon">F</div>
+                <div>
+                    <div class="logo-title">Forensic<span class="accent">AI</span></div>
+                    <div class="logo-sub">Reverse Engineering Lab</div>
+                </div>
+            </a>
+            <a href="#" onclick="openScanner(); return false;" class="btn-validate-link">
+                <svg width="14" height="14"><use href="#icon-shield"/></svg>
+                Validar Análise
+            </a>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        {% if error %}
+        <section class="card" style="border-color: var(--red); text-align: center; padding: 48px 24px;">
+            <div style="color: var(--red); margin-bottom: 16px;">
+                <svg width="48" height="48" stroke="currentColor"><use href="#icon-x"/></svg>
+            </div>
+            <h2 class="section-heading" style="color: var(--red);">Falha no Processamento Forense</h2>
+            <p class="section-sub">{{ error }}</p>
+            <a href="/" class="btn-primary" style="margin-top: 24px;">Tentar Novamente</a>
+        </section>
+        {% else %}
+        <!-- Preview and Verdict -->
+        <div style="display: flex; flex-direction: column; gap: 32px;">
+            {% if data.original_thumbnail %}
+            <section class="card" style="padding: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--border);">
+                <div style="padding: 12px 18px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 800; color: var(--text-ghost); letter-spacing: 1px;">
+                    MÍDIA ORIGINAL ANALISADA
+                </div>
+                <div style="padding: 0; background: #000; position: relative; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <img src="data:image/jpeg;base64,{{ data.original_thumbnail }}" alt="Mídia analisada" class="clickable" onclick="openModal(this.src)" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                </div>
+            </section>
+            {% endif %}
+
+            <section class="verdict-card">
+                <div class="vc-top">
+                    <div class="vc-gauge">
+                        <svg viewBox="0 0 100 100" class="gauge-svg">
+                            <circle class="g-circle-bg" cx="50" cy="50" r="45"/>
+                            <circle class="g-circle-fill" cx="50" cy="50" r="45"
+                                    stroke="{% if data.final_score > 50 %}var(--red){% elif data.final_score > 30 %}var(--amber){% else %}var(--green){% endif %}"
+                                    stroke-dasharray="283" stroke-dashoffset="{{ 283 - (data.final_score / 100) * 283 }}"/>
+                        </svg>
+                        <div class="g-score-text">{{ data.final_score|int }}</div>
+                    </div>
+                    <div class="vc-info">
+                        <h1 style="color:{{ data.verdict.color }}">{{ data.verdict.label }}</h1>
+                        <p class="vc-conf">Probabilidade: {{ data.final_score }}% · Confiança {{ data.verdict.confidence }} · {{ data.elapsed_seconds }}s</p>
+                        <div class="vc-findings">
+                            {% for f in data.verdict.key_findings %}
+                            <div class="finding">
+                                <svg width="12" height="12" stroke="var(--accent-blue)" style="margin-right:8px; vertical-align: middle;"><use href="#icon-zap"/></svg>
+                                {{ f }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="vc-meta">
+                    <div class="vm"><span class="vm-l">Identificador</span><span class="vm-v">{{ eval_id }}</span></div>
+                    <div class="vm"><span class="vm-l">Arquivo Origem</span><span class="vm-v">{{ data.original_filename or data.filename }}</span></div>
+                    <div class="vm"><span class="vm-l">Resolução</span><span class="vm-v">{{ data.dimensions }}</span></div>
+                    <div class="vm"><span class="vm-l">Data Estampa</span><span class="vm-v">{{ data.created_at_display }}</span></div>
+                    {% if data.type == 'video' %}
+                    <div class="vm"><span class="vm-l">Duração</span><span class="vm-v">{{ data.duration }}</span></div>
+                    <div class="vm"><span class="vm-l">Taxa de Quadros</span><span class="vm-v">{{ data.fps }} FPS</span></div>
+                    {% endif %}
+                </div>
+                <div class="vc-meta" style="border-top: 1px solid var(--border); padding: 12px 32px; gap: 12px; background: white;">
+                    <a href="/api/pdf/{{ eval_id }}" class="btn-validate-link">
+                        <svg width="14" height="14"><use href="#icon-file-text"/></svg> Relatório PDF
+                    </a>
+                    <a href="/validar/{{ eval_id }}" class="btn-validate-link">
+                        <svg width="14" height="14"><use href="#icon-link"/></svg> Url de Validação
+                    </a>
+                    <a href="#" onclick="openQRModal(); return false;" class="btn-validate-link">
+                        <svg width="14" height="14"><use href="#icon-smartphone"/></svg> QR Code
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <!-- Module Results -->
+        <section style="margin-top: 48px;">
+            <h2 class="section-heading">Vetores de Análise Forense</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                {% for mod in data.modules %}
+                <div class="mod-card {% if mod.name == 'Análise de Metadados (EXIF)' %}full-width{% endif %}">
+                    <div class="mc-head">
+                        <div class="mc-title">
+                            <svg width="18" height="18" stroke="var(--text-muted)"><use href="#icon-{{ mod.icon }}"/></svg>
+                            <span>{{ mod.name }}</span>
+                        </div>
+                        <span class="score-pill" style="background: {% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}#f1f5f9{% endif %}; color: {{ 'white' if mod.score > 30 else 'var(--text-muted)' }};">
+                            {{ mod.score|int }}
+                        </span>
+                    </div>
+                    
+                    {% if mod.name == 'Análise de Metadados (EXIF)' %}
+                    <div style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #fafafa;">
+                        <div style="font-size: 11px;">
+                            <div style="color: var(--text-ghost); font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Informações de Arquivo</div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Formato:</span><span style="font-weight: 700;">{{ mod.details.format }}</span></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Dimensões:</span><span style="font-weight: 700;">{{ mod.details.dimensions }}</span></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Modo:</span><span style="font-weight: 700;">{{ mod.details.mode }}</span></div>
+                        </div>
+                        <div style="font-size: 11px;">
+                            <div style="color: var(--text-ghost); font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Hardware/Software</div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Fabricante:</span><span style="font-weight: 700;">{{ mod.details.camera_make }}</span></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Software:</span><span style="font-weight: 700;">{{ mod.details.software }}</span></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Tags EXIF:</span><span style="font-weight: 700;">{{ mod.details.total_exif_tags }}</span></div>
+                        </div>
+                        <div style="font-size: 11px;">
+                            <div style="color: var(--text-ghost); font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Assinaturas Forenses</div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Marcador IA:</span><span style="font-weight: 700; color: {% if mod.details.ai_marker %}var(--red){% else %}var(--green){% endif %};">{{ mod.details.ai_marker or 'Ausente' }}</span></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>C2PA/Credentials:</span><span style="font-weight: 700;">{% if mod.details.c2pa_present %}Presente{% else %}Ausente{% endif %}</span></div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>Dados GPS:</span><span style="font-weight: 700;">{% if mod.details.gps_present %}Presente{% else %}Ausente{% endif %}</span></div>
+                        </div>
+                    </div>
+                    {% elif mod.visualization %}
+                    <div class="clickable" onclick="openModal('data:image/png;base64,{{ mod.visualization }}')" style="background: #000; height: 160px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+                        <img src="data:image/png;base64,{{ mod.visualization }}" alt="{{ mod.name }}" style="width: 100%; height: auto; opacity: 0.9;">
+                        <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 4px; color: white;">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div style="padding: 16px;">
+                        {% for f in mod.details.findings %}
+                        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px; padding-left: 12px; border-left: 2px solid var(--border);">
+                            {{ f }}
+                        </div>
+                        {% endfor %}
+                        <div style="height: 4px; background: var(--bg); border-radius: 2px; margin-top: 12px; overflow: hidden;">
+                            <div style="height: 100%; width: {{ mod.score }}%; background: {% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}var(--accent-blue){% endif %};"></div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if data.frame_thumbnails %}
+        <section style="margin-top: 48px;">
+            <h2 class="section-heading">Cronologia de Quadros</h2>
+            <p class="section-sub">{{ data.frame_thumbnails|length }} amostras processadas via matriz temporal</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+                {% for ft in data.frame_thumbnails %}
+                <div class="clickable" onclick="openModal('data:image/jpeg;base64,{{ ft.thumbnail }}')" style="background: white; border: 1px solid var(--border); border-radius: 6px; overflow: hidden;">
+                    <img src="data:image/jpeg;base64,{{ ft.thumbnail }}" alt="Frame" style="width: 100%; aspect-ratio: 16/9; object-fit: cover;">
+                    <div style="padding: 6px 10px; display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; color: var(--text-muted);">
+                        <span>{{ ft.timestamp }}</span>
+                        <span style="opacity: 0.6;">{{ ft.phase }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 64px; margin-bottom: 100px;">
+            <a href="/" class="btn-primary">
+                <svg width="18" height="18" stroke="white"><use href="#icon-refresh"/></svg>
+                Nova Investigação
+            </a>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Modal for Visualization -->
+    <div id="image-modal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="closeModal()">
+                <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
+            </div>
+            <img id="modal-img" class="modal-img" src="" alt="Ampliação">
+        </div>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div id="qr-modal" class="modal-overlay" onclick="closeQRModal()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="padding: 32px; text-align: center; max-width: 380px;">
+            <div class="modal-close" onclick="closeQRModal()">
+                <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
+            </div>
+            <h3 style="margin-bottom: 24px; font-weight: 700;">Validar no Dispositivo Móvel</h3>
+            <div style="background: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border); display: inline-block;">
+                <img id="qr-img" src="/api/qrcode/{{ eval_id }}?color=black" alt="QR Code" style="width: 240px; height: 240px; display: block;">
+            </div>
+            <p style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">Aponte a câmera para verificar a autenticidade deste laudo</p>
+        </div>
+    </div>
+
+    <!-- Scanner Modal -->
+    <div id="scanner-modal" class="modal-overlay" onclick="closeScanner()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 450px;">
+            <div class="modal-close" onclick="closeScanner()">
+                <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
+            </div>
+            <div style="padding: 32px; text-align: center;">
+                <h3 style="margin-bottom: 8px;">Validar QR Code</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Aponte a câmera para um código QR da ForensicAI</p>
+                <div class="scanner-container">
+                    <div id="reader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            © 2026 ForensicAI • Professional Forensic Analysis System
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="/static/js/scanner.js"></script>
+    <script>
+        function openModal(src) {
+            document.getElementById('modal-img').src = src;
+            document.getElementById('image-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            document.getElementById('image-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function openQRModal() {
+            document.getElementById('qr-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeQRModal() {
+            document.getElementById('qr-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeQRModal();
+            }
+        });
+    </script>
+</body>
+</html>

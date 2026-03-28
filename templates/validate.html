@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validação {{ eval_id }} — ForensicAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .validate-page {
+            max-width: 700px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        .val-shield {
+            margin-bottom: 24px;
+            color: var(--accent-blue);
+        }
+        .val-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .val-sub {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        .val-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: left;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+        .val-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .val-row:last-child { border: none; }
+        .vr-label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .vr-value { font-size: 14px; font-weight: 700; color: var(--text); }
+        .val-qr {
+            display: inline-block;
+            padding: 24px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        .val-qr img { display: block; margin: 0 auto 12px; }
+        .val-qr-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <svg style="display:none">
+        <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+        <symbol id="icon-file-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></symbol>
+        <symbol id="icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+        <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    </svg>
+
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon">F</div>
+                <div>
+                    <div class="logo-title">Forensic<span class="accent">AI</span></div>
+                    <div class="logo-sub">Reverse Engineering Lab</div>
+                </div>
+            </a>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <a href="#" onclick="openScanner(); return false;" class="btn-validate-link">
+                    <svg width="14" height="14"><use href="#icon-shield"/></svg>
+                    Validar Outro
+                </a>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--green);">
+                    <svg width="16" height="16"><use href="#icon-check"/></svg>
+                    CERTIFICADO VÁLIDO
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <section class="validate-page">
+            <div class="val-shield">
+                <svg width="64" height="64"><use href="#icon-shield"/></svg>
+            </div>
+
+            <h1 class="val-title">Análise de Matriz Validada</h1>
+            <p class="val-sub">Este relatório foi gerado e autenticado pela rede ForensicAI</p>
+
+            <div class="val-card">
+                <div class="val-row">
+                    <span class="vr-label">ID Único de Investigação</span>
+                    <span class="vr-value mono" style="color: var(--accent-blue)">{{ eval_id }}</span>
+                </div>
+                <div class="val-row">
+                    <span class="vr-label">Data e Hora do Processamento</span>
+                    <span class="vr-value">{{ data.created_at_display }}</span>
+                </div>
+                <div class="val-row">
+                    <span class="vr-label">Arquivo de Origem</span>
+                    <span class="vr-value">{{ data.original_filename or data.filename }}</span>
+                </div>
+                <div class="val-row">
+                    <span class="vr-label">Tipo de Objeto</span>
+                    <span class="vr-value">{{ 'Vídeo Digital' if data.type == 'video' else 'Imagem Digital' }}</span>
+                </div>
+                <div class="val-row">
+                    <span class="vr-label">Score de Probabilidade AI</span>
+                    <span class="vr-value" style="color:{{ data.verdict.color }};">{{ data.final_score }}%</span>
+                </div>
+                <div class="val-row">
+                    <span class="vr-label">Veredicto Forense</span>
+                    <span class="vr-value" style="color:{{ data.verdict.color }}; text-transform: uppercase;">{{ data.verdict.label }}</span>
+                </div>
+            </div>
+
+            <div class="val-qr">
+                <img src="/api/qrcode/{{ eval_id }}" alt="QR Code" width="128" height="128">
+                <p class="val-qr-text">Hash de Validação QR</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; max-width: 320px; margin: 0 auto;">
+                <a href="/api/pdf/{{ eval_id }}" class="btn-primary">
+                    <svg width="16" height="16" stroke="white" style="margin-right:8px"><use href="#icon-file-text"/></svg>
+                    Download Laudo PDF
+                </a>
+                <a href="/avaliacao/{{ eval_id }}" class="btn-outline">
+                    <svg width="16" height="16" style="margin-right:8px"><use href="#icon-external"/></svg>
+                    Acessar Matriz Completa
+                </a>
+                <a href="/" class="btn-outline">
+                    <svg width="16" height="16" style="margin-right:8px"><use href="#icon-plus"/></svg>
+                    Nova Investigação
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            © 2026 ForensicAI • Professional Forensic Analysis System
+        </div>
+    </footer>
+
+    <!-- Scanner Modal -->
+    <div id="scanner-modal" class="modal-overlay" onclick="closeScanner()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 450px;">
+            <div class="modal-close" onclick="closeScanner()">
+                <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
+            </div>
+            <div style="padding: 32px; text-align: center;">
+                <h3 style="margin-bottom: 8px;">Validar QR Code</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Aponte a câmera para um código QR da ForensicAI</p>
+                <div class="scanner-container">
+                    <div id="reader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="/static/js/scanner.js"></script>
+</body>
+</html>

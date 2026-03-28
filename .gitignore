@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+.hypothesis/
+.pytest_cache/
+
+# Forensic Data
+uploads/
+results/
+temp_frames/
+*.mp4
+*.jpg
+*.jpeg
+*.png
+!static/img/favicon.png
+!static/img/*.png
+
+# AI Models (will be downloaded by Docker/pre_download.py)
+models/
+.cache/huggingface/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

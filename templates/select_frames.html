@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecionar Frames — ForensicAI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .selectable-frame {
+            position: relative;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            transition: var(--tr);
+            background: var(--card);
+        }
+        .selectable-frame:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+        }
+        .selectable-frame.selected {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px var(--accent-blue);
+        }
+        .selectable-frame input {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-blue);
+            z-index: 2;
+        }
+        .selectable-frame img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+        }
+        .frame-time {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            font-size: 11px;
+            color: white;
+            font-weight: 700;
+        }
+        .selection-actions {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+            background: rgba(255,255,255,0.9);
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(8px);
+        }
+        .count-badge {
+            background: var(--accent-blue);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+        .score-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            z-index: 2;
+        }
+        .segment-badge {
+            position: absolute;
+            top: 10px;
+            left: 80px;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .segment-badge.inicio { background: #3b82f6; color: white; }
+        .segment-badge.meio { background: #f59e0b; color: white; }
+        .segment-badge.fim { background: #ef4444; color: white; }
+        .loading-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9);
+            z-index: 1000; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; backdrop-filter: blur(4px);
+        }
+        .btn-shuffle {
+            background: var(--bg-main);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--tr);
+        }
+        .btn-shuffle:hover {
+            border-color: var(--border-strong);
+            background: var(--hover);
+        }
+        .btn-shuffle:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Responsive Selection Bar */
+        @media (max-width: 768px) {
+            .selection-actions {
+                width: 95%;
+                bottom: 16px;
+                padding: 10px;
+                border-radius: 16px;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+            .selection-actions .btn-outline, 
+            .selection-actions .btn-shuffle,
+            .selection-actions .btn-primary {
+                flex: 1 1 calc(50% - 8px);
+                font-size: 11px;
+                padding: 8px 10px;
+                justify-content: center;
+            }
+            .count-badge {
+                margin-left: 4px;
+                padding: 1px 6px;
+                font-size: 10px;
+            }
+            .section-title {
+                margin-bottom: 24px;
+            }
+            .section-title h2 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .selection-actions .btn-outline, 
+            .selection-actions .btn-shuffle,
+            .selection-actions .btn-primary {
+                flex: 1 1 100%;
+                font-size: 10px;
+            }
+            .selection-actions {
+                border-radius: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <svg style="display:none">
+        <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+        <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+        <symbol id="icon-shuffle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></symbol>
+    </svg>
+
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon">F</div>
+                <div>
+                    <div class="logo-title">Forensic<span class="accent">AI</span></div>
+                    <div class="logo-sub">Reverse Engineering Lab</div>
+                </div>
+            </a>
+            <a href="#" onclick="openScanner(); return false;" class="btn-validate-link">
+                <svg width="14" height="14"><use href="#icon-shield"/></svg>
+                Validar Análise
+            </a>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <div class="section-title">
+            <h2>Seleção de Alvos Forenses</h2>
+            <p>Selecione os quadros mais relevantes para processamento profundo</p>
+        </div>
+
+        <form id="selection-form">
+            <input type="hidden" name="temp_filename" value="{{ temp_filename }}">
+            <div id="frames-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 100px;">
+                {% for frame in frames %}
+                <label class="selectable-frame" data-index="{{ frame.index }}">
+                    <div class="score-badge">SCORE: {{ frame.content_score }}</div>
+                    <div class="segment-badge {{ frame.segment }}">{{ frame.segment }}</div>
+                    <input type="checkbox" name="indices[]" value="{{ frame.index }}" class="frame-checkbox">
+                    <img src="data:image/jpeg;base64,{{ frame.thumbnail }}" alt="Frame {{ frame.index }}">
+                    <div class="frame-time">{{ frame.timestamp }}</div>
+                </label>
+                {% endfor %}
+            </div>
+
+            <div class="selection-actions">
+                <a href="/" class="btn-outline">
+                    <svg width="14" height="14" style="margin-right:6px"><use href="#icon-x"/></svg> Cancelar
+                </a>
+                <button type="button" id="select-all-btn" class="btn-outline">
+                    <svg width="14" height="14" style="margin-right:6px"><use href="#icon-check"/></svg> Selecionar Todos
+                </button>
+                <button type="button" id="shuffle-btn" class="btn-shuffle">
+                    <svg width="14" height="14"><use href="#icon-shuffle"/></svg> Sortear Novos Frames
+                </button>
+                <button type="submit" id="submit-btn" class="btn-primary" disabled>
+                    <svg width="14" height="14" fill="none" stroke="white" style="margin-right:6px"><use href="#icon-search"/></svg>
+                    Analisar Selecionados <span id="selected-count" class="count-badge">0</span>
+                </button>
+            </div>
+        </form>
+    <footer class="footer">
+        <div class="container">
+            © 2026 ForensicAI • Professional Forensic Analysis System
+        </div>
+    </footer>
+
+    <!-- Ad Modal (Locked for 10s) -->
+    <div id="ad-modal" class="ad-modal">
+        <div class="ad-content">
+            <div class="ad-logo">Forensic<span class="accent">AI</span> <span style="font-size: 14px; vertical-align: middle; opacity: 0.7;">PRO</span></div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Preparando matriz de análise forense profunda...</p>
+            
+            <div class="ad-timer-box">
+                <div id="ad-countdown" class="countdown-circle">10</div>
+            </div>
+
+            <p id="ad-status-text" style="font-weight: 600; margin-bottom: 24px; color: var(--accent-blue); font-size: 14px;">Iniciando amostragem temporal...</p>
+            
+            <button id="close-ad-btn" class="ad-btn" disabled>Acessar Resultados</button>
+            <p style="font-size: 10px; margin-top: 16px; opacity: 0.5;">A análise iniciará automaticamente após o processamento dos modelos.</p>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+        <div class="dna-spinner"></div>
+        <h2 class="loading-title">Iniciando Investigação</h2>
+        <p class="loading-sub">Executando matriz de algoritmos forenses...</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('selection-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const countBadge = document.getElementById('selected-count');
+        const overlay = document.getElementById('loading-overlay');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+        const selectAllBtn = document.getElementById('select-all-btn');
+        const framesGrid = document.getElementById('frames-grid');
+        const tempFilename = '{{ temp_filename }}';
+
+        function updateState() {
+            const count = document.querySelectorAll('.frame-checkbox:checked').length;
+            countBadge.textContent = count;
+            submitBtn.disabled = count < 1;
+        }
+
+        function attachCheckboxListeners() {
+            document.querySelectorAll('.frame-checkbox').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const parent = cb.closest('.selectable-frame');
+                    if (cb.checked) parent.classList.add('selected');
+                    else parent.classList.remove('selected');
+                    updateState();
+                });
+            });
+        }
+        attachCheckboxListeners();
+
+        selectAllBtn.addEventListener('click', () => {
+            const allChecked = Array.from(document.querySelectorAll('.frame-checkbox')).every(cb => cb.checked);
+            document.querySelectorAll('.frame-checkbox').forEach(cb => {
+                cb.checked = !allChecked;
+                const parent = cb.closest('.selectable-frame');
+                if (cb.checked) parent.classList.add('selected');
+                else parent.classList.remove('selected');
+            });
+            updateState();
+            selectAllBtn.innerHTML = allChecked ? 
+                '<svg width="14" height="14" style="margin-right:6px"><use href="#icon-check"/></svg> Selecionar Todos' :
+                '<svg width="14" height="14" style="margin-right:6px"><use href="#icon-x"/></svg> Desmarcar Todos';
+        });
+
+        shuffleBtn.addEventListener('click', async () => {
+            shuffleBtn.disabled = true;
+            shuffleBtn.innerHTML = '<svg width="14" height="14" class="spin"><use href="#icon-shuffle"/></svg> Sorteando...';
+            try {
+                const res = await fetch(`/api/shuffle-frames?file=${encodeURIComponent(tempFilename)}`);
+                const data = await res.json();
+                if (data.frames && data.frames.length > 0) {
+                    let html = '';
+                    data.frames.forEach(f => {
+                        html += `<label class="selectable-frame" data-index="${f.index}">
+                            <div class="score-badge">SCORE: ${f.content_score}</div>
+                            <div class="segment-badge ${f.segment}">${f.segment}</div>
+                            <input type="checkbox" name="indices[]" value="${f.index}" class="frame-checkbox">
+                            <img src="data:image/jpeg;base64,${f.thumbnail}" alt="Frame ${f.index}">
+                            <div class="frame-time">${f.timestamp}</div>
+                        </label>`;
+                    });
+                    framesGrid.innerHTML = html;
+                    attachCheckboxListeners();
+                    countBadge.textContent = '0';
+                    submitBtn.disabled = true;
+                }
+            } catch(e) {
+                console.error('Shuffle error:', e);
+            }
+            shuffleBtn.disabled = false;
+            shuffleBtn.innerHTML = '<svg width="14" height="14"><use href="#icon-shuffle"/></svg> Sortear Novos Frames';
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const adModal = document.getElementById('ad-modal');
+            const countdownEl = document.getElementById('ad-countdown');
+            const statusEl = document.getElementById('ad-status-text');
+            const closeBtn = document.getElementById('close-ad-btn');
+
+            adModal.classList.add('active');
+            let count = 10;
+            const messages = [
+                "Sincronizando vetores de detecção...",
+                "Carregando modelos de Deep Learning...",
+                "Analisando artefatos de difusão...",
+                "Validando assinaturas digitais...",
+                "Quase pronto para a matriz..."
+            ];
+
+            const timer = setInterval(() => {
+                count--;
+                countdownEl.textContent = count;
+                if (count % 3 === 0) {
+                    statusEl.textContent = messages[Math.floor(Math.random() * messages.length)];
+                }
+                if (count <= 0) {
+                    clearInterval(timer);
+                    statusEl.textContent = "Investigação Liberada!";
+                    closeBtn.disabled = false;
+                    closeBtn.innerHTML = "Ver Resultados Forenses";
+                    closeBtn.onclick = () => {
+                        adModal.classList.remove('active');
+                        executeAnalysis();
+                    };
+                }
+            }, 1000);
+        });
+
+        async function executeAnalysis() {
+            overlay.style.display = 'flex';
+            const formData = new FormData(form);
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.redirect) {
+                    window.location.href = result.redirect;
+                } else {
+                    alert('Erro: ' + (result.error || 'Falha na análise'));
+                    overlay.style.display = 'none';
+                }
+            } catch (err) {
+                let msg = 'Erro de conexão ou servidor reiniciando. Aguarde alguns segundos e tente novamente.';
+                alert(msg);
+                overlay.style.display = 'none';
+            }
+        }
+    </script>
+    <!-- Scanner Modal -->
+    <div id="scanner-modal" class="modal-overlay" onclick="closeScanner()">
+        <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 450px;">
+            <div class="modal-close" onclick="closeScanner()">
+                <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
+            </div>
+            <div style="padding: 32px; text-align: center;">
+                <h3 style="margin-bottom: 8px;">Validar QR Code</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Aponte a câmera para um código QR da ForensicAI</p>
+                <div class="scanner-container">
+                    <div id="reader"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="/static/js/scanner.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+﻿python : Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and 
+faster downloads.
+No linha:1 caractere:1
++ python test_accuracy.py 2>&1 | Out-File -FilePath test_results.txt -E ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Warning: You ar...ster downloads.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+============================================================
+  AI IMAGE (Expected ~98%): Captura de tela 2026-03-28 155147.png
+============================================================
+
+Loading weights:   0%|          | 0/449 [00:00<?, ?it/s]
+Loading weights: 100%|##########| 449/449 [00:00<00:00, 26291.62it/s]
+  FINAL SCORE: 55.3%
+  VERDICT: Detectado como IA (Alta)
+
+  MODULE BREAKDOWN:
+     36%  Classificador Neural (DL)
+         -> Classificador neural: 64.2% de probabilidade de conte·do autÛntico
+     30%  Anßlise de FrequÛncia (FFT)
+         -> Energia de alta frequÛncia anormalmente baixa - possÝvel suavizaþÒo excessiva
+         -> Espectro anormalmente plano nas altas frequÛncias
+     64%  Anßlise de RuÝdo (PRNU)
+         -> NÝvel de ruÝdo suspeitamente baixo - possÝvel suavizaþÒo artificial
+         -> VariÔncia do ruÝdo excessivamente uniforme - inconsistente com sensor real
+     25%  Anßlise de NÝvel de Erro (ELA)
+         -> Padr§es de ELA consistentes com imagem natural
+      7%  Anßlise de Gradiente
+         -> Padr§es de gradiente consistentes com captura ¾ptica real
+     36%  Anßlise EstatÝstica
+         -> Entropia de Shannon alta (7.81) - possÝvel ruÝdo artificial
+     35%  Anßlise Wavelet (DWT)
+         -> Forte anisotropia nas sub-bandas - possÝvel artefato de processamento direcional
+     55%  Score Horizontal/Vertical
+         -> Picos peri¾dicos detectados no espectro H/V (20H + 22V) - possÝveis artefatos de processamento por blocos
+         -> Perfis H/V nÒo-suaves - inconsistentes com distribuiþÒo espectral natural
+     22%  Anßlise de Textura (AI)
+         -> PadrÒo binßrio local excessivamente uniforme - textura sintÚtica
+     15%  Anßlise de Metadados (EXIF)
+         -> Nenhum dado EXIF encontrado - metadados removidos ou conte·do gerado digitalmente
+
+============================================================
+  REAL IMAGE (Expected ~0%): Captura de tela 2026-01-20 140028.png
+============================================================
+  FINAL SCORE: 15.4%
+  VERDICT: AutÛntico / Real (Alta)
+
+  MODULE BREAKDOWN:
+      1%  Classificador Neural (DL)
+         -> Classificador neural: 99.1% de probabilidade de conte·do autÛntico
+     30%  Anßlise de FrequÛncia (FFT)
+         -> Energia de alta frequÛncia anormalmente baixa - possÝvel suavizaþÒo excessiva
+         -> Espectro anormalmente plano nas altas frequÛncias
+     65%  Anßlise de RuÝdo (PRNU)
+         -> NÝvel de ruÝdo suspeitamente baixo - possÝvel suavizaþÒo artificial
+         -> VariÔncia do ruÝdo excessivamente uniforme - inconsistente com sensor real
+     25%  Anßlise de NÝvel de Erro (ELA)
+         -> Padr§es de ELA consistentes com imagem natural
+      5%  Anßlise de Gradiente
+         -> Padr§es de gradiente consistentes com captura ¾ptica real
+     33%  Anßlise EstatÝstica
+         -> Entropia de Shannon alta (7.80) - possÝvel ruÝdo artificial
+     20%  Anßlise Wavelet (DWT)
+         -> DecomposiþÒo wavelet consistente com conte·do natural
+     52%  Score Horizontal/Vertical
+         -> Picos peri¾dicos detectados no espectro H/V (16H + 24V) - possÝveis artefatos de processamento por blocos
+         -> Perfis H/V nÒo-suaves - inconsistentes com distribuiþÒo espectral natural
+     24%  Anßlise de Textura (AI)
+         -> PadrÒo binßrio local excessivamente uniforme - textura sintÚtica
+     15%  Anßlise de Metadados (EXIF)
+         -> Nenhum dado EXIF encontrado - metadados removidos ou conte·do gerado digitalmente
