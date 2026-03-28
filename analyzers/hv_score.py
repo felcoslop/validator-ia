@@ -71,24 +71,22 @@ def analyze(image_np):
     score = 0
 
     # Periodic peaks (strong GAN indicator)
-    score += min(30, (h_peaks + v_peaks) * 5)
+    score += min(20, (h_peaks + v_peaks) * 3)
 
     # Non-smooth profiles
     mean_smoothness = (h_smoothness + v_smoothness) / 2
-    if mean_smoothness > 0.3:
-        score += 20
-    elif mean_smoothness > 0.15:
-        score += 10
+    if mean_smoothness > 0.5:
+        score += 15
+    elif mean_smoothness > 0.3:
+        score += 8
 
     # Anisotropy
-    if anisotropy > 0.5:
-        score += 15
-    elif anisotropy > 0.2:
-        score += 5
+    if anisotropy > 0.8:
+        score += 10
 
     # Spectral anomalies
     anomaly_score = (h_anomaly + v_anomaly) / 2
-    score += min(25, int(anomaly_score * 25))
+    score += min(15, int(anomaly_score * 15))
 
     score = min(100, max(0, score))
 

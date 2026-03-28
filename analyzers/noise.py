@@ -54,39 +54,31 @@ def analyze(image_np):
     # Score calculation — tuned for modern diffusion model detection
     score = 0
 
-    # Noise level: AI images have artificially clean noise
-    if noise_var < 5e-5:
-        score += 35  # Very suspiciously clean (strong AI signal)
-    elif noise_var < 5e-4:
-        score += 25  # Suspiciously clean
-    elif noise_var < 2e-3:
-        score += 15  # Somewhat clean
-    elif noise_var > 0.01:
-        score += 10  # Abnormally noisy
+    # Noise level: AI images have artificially clean noise (but so does aggressive JPEG)
+    if noise_var < 1e-5:
+        score += 15
+    elif noise_var < 5e-5:
+        score += 8
+    elif noise_var > 0.05:
+        score += 5
 
     # Local variance consistency: AI has too-uniform noise distribution
-    if var_of_vars < 0.01:
-        score += 25  # Extremely uniform (very strong AI signal)
-    elif var_of_vars < 0.05:
-        score += 20  # Too uniform (synthetic)
-    elif var_of_vars < 0.2:
-        score += 10  # Somewhat uniform
-    elif var_of_vars > 2.0:
+    if var_of_vars < 0.005:
         score += 15
+    elif var_of_vars < 0.01:
+        score += 8
 
     # Autocorrelation (periodic patterns from neural networks)
-    score += min(25, int(autocorr_score * 30))
+    score += min(15, int(autocorr_score * 20))
 
     # Non-Gaussian noise (real camera noise is Gaussian; AI noise is not)
-    if gaussianity < 0.4:
-        score += 20
-    elif gaussianity < 0.6:
-        score += 12
-    elif gaussianity < 0.8:
+    if gaussianity < 0.2:
+        score += 10
+    elif gaussianity < 0.4:
         score += 5
 
     # Structured patterns from neural network architecture
-    score += min(20, int(structure_score * 25))
+    score += min(15, int(structure_score * 15))
 
     score = min(100, max(0, score))
 

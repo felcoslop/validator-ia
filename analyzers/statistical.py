@@ -38,33 +38,25 @@ def analyze(image_np):
     score = 0
 
     # Entropy (natural images typically 6.5-7.5)
-    if entropy < 5.0 or entropy > 7.8:
-        score += 20
-    elif entropy < 5.5 or entropy > 7.5:
-        score += 12
-    elif entropy < 6.0:
-        score += 5
+    if entropy < 4.5 or entropy > 7.9:
+        score += 15
+    elif entropy < 5.0:
+        score += 8
 
     # Histogram anomalies
-    score += min(20, int(hist_anomaly * 25))
+    score += min(15, int(hist_anomaly * 15))
 
     # Benford's Law violation (stronger weight - key AI indicator)
-    score += min(30, int(benford_score * 35))
+    score += min(15, int(benford_score * 15))
 
     # Adjacency correlation (AI diffusion models: very high correlation from smoothing)
-    if adj_corr > 0.998:
-        score += 30  # Extremely high (strong AI signal)
-    elif adj_corr > 0.995:
-        score += 22
-    elif adj_corr > 0.99:
-        score += 15
-    elif adj_corr > 0.98:
-        score += 8
-    elif adj_corr < 0.9:
-        score += 3
+    if adj_corr > 0.999:
+        score += 20
+    elif adj_corr > 0.997:
+        score += 10
 
     # LSB analysis
-    score += min(15, int(lsb_score * 18))
+    score += min(10, int(lsb_score * 12))
 
     # JPEG ghost
     score += min(10, int(jpeg_score * 10))

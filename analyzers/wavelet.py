@@ -87,32 +87,25 @@ def analyze(image_np):
     score = 0
 
     # Non-smooth energy decay
-    if decay_residual > 1.0:
-        score += 20
-    elif decay_residual > 0.5:
-        score += 10
+    if decay_residual > 2.0:
+        score += 15
+    elif decay_residual > 1.5:
+        score += 8
 
     # Kurtosis deviation (natural sub-bands: kurtosis ~6-20; AI: extreme peaks)
-    if mean_kurtosis > 100:
-        score += 40
-    elif mean_kurtosis > 50 or mean_kurtosis < 4:
-        score += 25
-    elif mean_kurtosis > 30 or mean_kurtosis < 5:
-        score += 15
-        
-    # Anisotropy (strong directional bias suggests processing artifacts)
-    if anisotropy > 0.6:
-        score += 30
-    elif anisotropy > 0.4:
+    if mean_kurtosis > 200:
         score += 20
-    elif anisotropy > 0.3:
+    elif mean_kurtosis > 100:
         score += 10
-    elif fine_coarse_ratio > 100:
-        score += 10  # Abnormal fine detail energy
 
-    # Fine/coarse ratio
-    if fine_coarse_ratio < 0.001:
-        score += 15  # Suspiciously smooth fine details
+    # Fine-scale noise analysis
+    if fine_coarse_ratio > 3.0 or fine_coarse_ratio < 0.001:
+        score += 15
+    elif fine_coarse_ratio > 2.0:
+        score += 8
+
+    # Anisotropy check
+    score += min(15, int(anisotropy * 15))
 
     # Abnormal decay rate
     if decay_rate < 0.3 or decay_rate > 3.0:
