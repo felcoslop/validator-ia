@@ -71,13 +71,13 @@ def analyze(image_np):
         }
 
         if ai_score > 0.85:
-            details['findings'].append(f'Rede neural classificou como conteúdo gerado por IA com {ai_score*100:.1f}% de confiança — padrões característicos de modelos generativos foram identificados na estrutura profunda da imagem')
+            details['findings'].append({'key': 'finding_dl_high_conf', 'conf': round(ai_score*100, 1)})
         elif ai_score > 0.6:
-            details['findings'].append(f'Classificador neural detectou sinais de geração por IA ({ai_score*100:.1f}%) — múltiplas características de processamento sintético foram identificadas')
+            details['findings'].append({'key': 'finding_dl_mod_conf', 'conf': round(ai_score*100, 1)})
         elif ai_score > 0.4:
-            details['findings'].append(f'Classificador neural detectou sinais moderados de IA ({ai_score*100:.1f}% IA vs {human_score*100:.1f}% Real) — a imagem apresenta características mistas que sugerem manipulação ou geração parcial')
+            details['findings'].append({'key': 'finding_dl_low_conf', 'conf': round(ai_score*100, 1), 'real': round(human_score*100, 1)})
         else:
-            details['findings'].append(f'Classificador neural identificou como conteúdo autêntico com {human_score*100:.1f}% de confiança — padrões compatíveis com captura por dispositivo real')
+            details['findings'].append({'key': 'finding_dl_real', 'conf': round(human_score*100, 1)})
 
         return {
             'name': 'Classificador Neural (DL)',

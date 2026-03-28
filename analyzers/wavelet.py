@@ -135,17 +135,15 @@ def analyze(image_np):
     }
 
     if decay_residual > 1.0:
-        details['findings'].append('Decaimento de energia wavelet não-suave — a decomposição multi-escala revela irregularidades incompatíveis com processos ópticos naturais; característico de geração por rede neural')
+        details['findings'].append({'key': 'finding_wavelet_hf_anomaly'})
     if anisotropy > 0.5:
-        details['findings'].append('Forte anisotropia direcional nas sub-bandas wavelet — modelos generativos utilizam convoluções separáveis que introduzem artefatos direcionais invisíveis ao olho humano, mas detectáveis na decomposição')
-    if mean_kurtosis < 4:
-        details['findings'].append(f'Curtose anormalmente baixa nas sub-bandas ({mean_kurtosis:.1f}) — distribuição excessivamente gaussiana indica suavização artificial; imagens reais possuem distribuições com caudas pesadas')
-    if mean_kurtosis > 50:
-        details['findings'].append(f'Curtose extrema nas sub-bandas ({mean_kurtosis:.1f}) — concentração anormal de energia indica processamento por blocos de atenção (Transformers) ou convolução profunda')
+        details['findings'].append({'key': 'finding_wavelet_subband_imbalance'})
+    if mean_kurtosis < 4 or mean_kurtosis > 50:
+        details['findings'].append({'key': 'finding_wavelet_hf_anomaly'}) # Generic wavelet anomaly
     if fine_coarse_ratio < 0.001:
-        details['findings'].append('Detalhes finos ausentes na decomposição wavelet — suavização sintética eliminou a micro-textura que existe em toda imagem capturada por câmera real')
+        details['findings'].append({'key': 'finding_wavelet_hf_anomaly'})
     if not details['findings']:
-        details['findings'].append('Decomposição wavelet compatível com conteúdo fotográfico real — energia multi-escala e anisotropia dentro dos parâmetros naturais')
+        details['findings'].append({'key': 'finding_wavelet_natural'})
 
     return {
         'name': 'Análise Wavelet (DWT)',

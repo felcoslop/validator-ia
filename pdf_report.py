@@ -92,8 +92,16 @@ def _b64_to_image(b64_string, max_width=None, max_height=None, rounded=True):
 def generate(data, eval_id, base_url, lang='pt'):
     """Generate professional forensic PDF report."""
     
-    def _(key):
-        return TRANSLATIONS.get(lang, TRANSLATIONS['pt']).get(key, key)
+    def _(key, **kwargs):
+        if isinstance(key, dict):
+            params = key.copy()
+            k = params.pop('key', '')
+            text = TRANSLATIONS.get(lang, TRANSLATIONS['pt']).get(k, k)
+            try:
+                return text.format(**params)
+            except:
+                return text
+        return TRANSLATIONS.get(lang, TRANSLATIONS['pt']).get(key, str(key))
     pdf_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'pdfs')
     os.makedirs(pdf_dir, exist_ok=True)
     pdf_path = os.path.join(pdf_dir, f'{eval_id}.pdf')
@@ -206,7 +214,7 @@ def generate(data, eval_id, base_url, lang='pt'):
     # Key Findings
     elements.append(Paragraph(_('detected_vectors_of_interest').upper(), heading_style))
     for f in verdict.get('key_findings', []):
-        elements.append(Paragraph(f'[-] {f}', finding_style))
+        elements.append(Paragraph(f'[-] {_(f)}', finding_style))
     
     elements.append(Spacer(1, 8 * mm))
 
@@ -252,7 +260,7 @@ def generate(data, eval_id, base_url, lang='pt'):
         
         findings = mod.get('details', {}).get('findings', [])
         for f in findings:
-            mod_elements.append(Paragraph(f'[+] {f}', finding_style))
+            mod_elements.append(Paragraph(f'[+] {_(f)}', finding_style))
 
         # Visualization
         viz = mod.get('visualization')

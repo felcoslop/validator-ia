@@ -498,15 +498,15 @@ def _temporal_findings(frame_scores, early_detected):
     var = np.var(frame_scores)
 
     if early_detected:
-        findings.append('⚡ Detecção rápida: sinais de IA identificados nos primeiros frames')
+        findings.append({'key': 'finding_temporal_early_ai'})
     if mean > 60:
-        findings.append(f'Score médio dos frames alto ({mean:.0f}) — forte indicação de geração por IA')
+        findings.append({'key': 'finding_temporal_high_mean', 'score': round(mean, 0)})
     if var > 200:
-        findings.append('Alta variação entre frames — possível inconsistência temporal de IA')
+        findings.append({'key': 'finding_temporal_high_var'})
     if var < 5 and len(frame_scores) > 3:
-        findings.append('Scores muito uniformes entre frames — consistência suspeita')
+        findings.append({'key': 'finding_temporal_low_var'})
     if not findings:
-        findings.append('Análise temporal dentro dos parâmetros normais')
+        findings.append({'key': 'finding_temporal_natural'})
 
     return findings
 
@@ -643,8 +643,12 @@ def _generate_verdict(score, results):
     for r in results:
         if r.get('score', 0) >= 30:
             for f in r.get('details', {}).get('findings', []):
-                if f and not f.startswith('Textura') and not f.startswith('Estatísticas de') and 'consistente com' not in f:
-                    key_findings.append(f)
+                if not f: continue
+                # Safety check: if f is a dict (localized), we don't apply legacy string filters
+                if isinstance(f, str):
+                    if f.startswith('Textura') or f.startswith('Estatísticas de') or 'consistente com' in f:
+                        continue
+                key_findings.append(f)
 
     return {
         'level': level, 'label': label, 'confidence': confidence,

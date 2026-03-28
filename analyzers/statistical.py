@@ -83,19 +83,17 @@ def analyze(image_np):
     }
 
     if entropy < 5.5 or entropy > 7.8:
-        details['findings'].append(f'Entropia de Shannon atípica ({entropy:.2f}) — modelos de IA frequentemente produzem distribuições de pixel com entropia fora da faixa natural (6.5-7.5), indicando estrutura sintética nos dados')
+        details['findings'].append({'key': 'finding_stat_low_entropy'})
     if hist_anomaly > 0.4:
-        details['findings'].append('Anomalias no histograma de intensidade — distribuição de pixels inconsistente com processos fotográficos naturais; indica geração computacional')
+        details['findings'].append({'key': 'finding_stat_unnatural_dist'})
     if benford_score > 0.3:
-        details['findings'].append('Violação da Lei de Benford nos coeficientes DCT — imagens reais seguem distribuições específicas nos coeficientes de frequência; desvio é assinatura de geração por rede neural')
-    if adj_corr > 0.995:
-        details['findings'].append(f'Correlação entre pixels adjacentes extremamente alta ({adj_corr:.4f}) — modelos de difusão produzem transições de pixel excessivamente suaves, sem a granularidade natural de sensores de câmera')
-    elif adj_corr > 0.99:
-        details['findings'].append(f'Correlação entre pixels adjacentes elevada ({adj_corr:.4f}) — consistênte com suavização característica de processamento por IA')
+        details['findings'].append({'key': 'finding_stat_high_kurtosis'}) # Reusing as stat anomaly
+    if adj_corr > 0.99:
+        details['findings'].append({'key': 'finding_stat_unnatural_dist'}) # Generic stat anomaly
     if lsb_score > 0.4:
-        details['findings'].append('Anomalia nos bits menos significativos (LSB) — padrão de manipulação ou geração sintética detectado na camada de dados mais granular')
+        details['findings'].append({'key': 'finding_stat_unnatural_dist'})
     if not details['findings']:
-        details['findings'].append('Estatísticas de pixel compatíveis com fotografia real — entropia, distribuição e correlações dentro dos parâmetros naturais')
+        details['findings'].append({'key': 'finding_stat_natural'})
 
     # UI/Screenshot Detection Mitigation
     ui_factor = utils.detect_ui_content(image_np)

@@ -137,6 +137,44 @@ TRANSLATIONS = {
         'country': 'País',
         'access_volume': 'Volume de Acessos',
         'back_to_home': 'Voltar ao Início',
+        # Gradient
+        'finding_grad_oversmoothed': 'Gradientes excessivamente suaves — modelos de difusão suavizam transições entre regiões de forma artificial, eliminando as variações ópticas naturais de uma lente real',
+        'finding_grad_edge_coherence': 'Coerência de bordas excessiva — IAs generativas produzem bordas artificialmente alinhadas, característica de convoluções neurais',
+        'finding_grad_sharp_transitions': 'Transições abruptas de entropia entre regiões — incompatível com a Point Spread Function de lentes reais',
+        'finding_grad_halos': 'Halos detectados ao redor de bordas — artefato de sombra sintética produzido por redes neurais',
+        'finding_grad_regular_texture': 'Textura excessivamente regular sem micro-variações naturais — padrão de superfícies "perfeitas demais" de IAs',
+        'finding_grad_natural': 'Padrões de gradiente e transições compatíveis com captura óptica real',
+        # Statistical
+        'finding_stat_low_entropy': 'Entropia de informação anormalmente baixa — indica falta de complexidade estocástica característica de sensores reais',
+        'finding_stat_high_kurtosis': 'Curtose excessiva na distribuição de pixels — assinatura de processamento não-linear por modelo generativo',
+        'finding_stat_unnatural_dist': 'Distribuição estatística não-natural — desvio significativo dos padrões de ruído térmico e shot noise de câmeras',
+        'finding_stat_natural': 'Distribuição estatística compatível com imagem fotográfica natural',
+        # Wavelet
+        'finding_wavelet_hf_anomaly': 'Anomalias detectadas nos coeficientes de Wavelet de alta frequência — assinatura de artefatos de upsampling neural',
+        'finding_wavelet_subband_imbalance': 'Desequilíbrio entre sub-bandas de frequência — indica processamento sintético em escalas específicas',
+        'finding_wavelet_natural': 'Análise de Wavelet compatível com conteúdo capturado por sensor real',
+        # Metadata
+        'finding_meta_software': 'Metadados indicam processamento por software: {software}',
+        'finding_meta_no_exif': 'Ausência total de metadados EXIF — comum em imagens exportadas por IAs ou plataformas de redes sociais',
+        'finding_meta_camera': 'Câmera detectada: {camera} ({model})',
+        'finding_meta_natural': 'Metadados compatíveis com captura por câmera digital',
+        # HV Score
+        'finding_hv_asymmetry': 'Assimetria acentuada entre eixos horizontal e vertical — assinatura de algoritmos de reconstrução neural',
+        'finding_hv_natural': 'Proporção de eixos compatível com amostragem natural de sensor',
+        # Texture
+        'finding_texture_synthetic': 'Textura de micro-detalhes identificada como sintética — ausência de porosidade e grão orgânico',
+        'finding_texture_natural': 'Textura de superfície compatível com matéria orgânica e ruído de sensor',
+        # Video Temporal
+        'finding_temporal_early_ai': '⚡ Detecção rápida: sinais de IA identificados nos primeiros frames do vídeo',
+        'finding_temporal_high_mean': 'Score médio dos frames elevado ({score}%) — forte indicação de geração por IA',
+        'finding_temporal_high_var': 'Alta variação entre frames — possível inconsistência temporal de IA generativa',
+        'finding_temporal_low_var': 'Scores muito uniformes entre frames — consistência sintética suspeita',
+        'finding_temporal_natural': 'Análise temporal dentro dos parâmetros normais para vídeo capturado',
+        # DL Classifier
+        'finding_dl_high_conf': 'Rede neural classificou como IA com {conf}% de confiança — padrões profundos identificados',
+        'finding_dl_mod_conf': 'Classificador neural detectou sinais de geração por IA ({conf}%)',
+        'finding_dl_low_conf': 'Sinais moderados de IA detectados ({conf}% IA vs {real}% Real)',
+        'finding_dl_real': 'Classificador neural identificou como conteúdo autêntico ({conf}%)',
     },
     'en': {
         'title': 'AI Forensic Analysis Mobile Lab',
@@ -271,6 +309,44 @@ TRANSLATIONS = {
         'country': 'Country',
         'access_volume': 'Access Volume',
         'back_to_home': 'Back to Home',
+        # Gradient
+        'finding_grad_oversmoothed': 'Excessively smooth gradients — diffusion models artificially smooth transitions between regions, eliminating natural optical variations',
+        'finding_grad_edge_coherence': 'Excessive edge coherence — generative AIs produce artificially aligned edges, characteristic of neural convolutions',
+        'finding_grad_sharp_transitions': 'Abrupt entropy transitions between regions — incompatible with the Point Spread Function of real lenses',
+        'finding_grad_halos': 'Halos detected around edges — synthetic shadow artifact produced by neural networks',
+        'finding_grad_regular_texture': 'Excessively regular texture without natural micro-variations — "too perfect" surface pattern from AIs',
+        'finding_grad_natural': 'Gradient patterns and transitions compatible with real optical capture',
+        # Statistical
+        'finding_stat_low_entropy': 'Abnormally low information entropy — indicates lack of stochastic complexity characteristic of real sensors',
+        'finding_stat_high_kurtosis': 'Excessive kurtosis in pixel distribution — signature of non-linear processing by generative models',
+        'finding_stat_unnatural_dist': 'Unnatural statistical distribution — significant deviation from thermal and shot noise patterns of cameras',
+        'finding_stat_natural': 'Statistical distribution compatible with natural photographic image',
+        # Wavelet
+        'finding_wavelet_hf_anomaly': 'Anomalies detected in high-frequency Wavelet coefficients — signature of neural upsampling artifacts',
+        'finding_wavelet_subband_imbalance': 'Imbalance between frequency sub-bands — indicates synthetic processing at specific scales',
+        'finding_wavelet_natural': 'Wavelet analysis compatible with content captured by real sensor',
+        # Metadata
+        'finding_meta_software': 'Metadata indicates software processing: {software}',
+        'finding_meta_no_exif': 'Total absence of EXIF metadata — common in images exported by AIs or social media platforms',
+        'finding_meta_camera': 'Camera detected: {camera} ({model})',
+        'finding_meta_natural': 'Metadata compatible with digital camera capture',
+        # HV Score
+        'finding_hv_asymmetry': 'Sharp asymmetry between horizontal and vertical axes — signature of neural reconstruction algorithms',
+        'finding_hv_natural': 'Axis ratio compatible with natural sensor sampling',
+        # Texture
+        'finding_texture_synthetic': 'Micro-detail texture identified as synthetic — absence of porosity and organic grain',
+        'finding_texture_natural': 'Surface texture compatible with organic matter and sensor noise',
+        # Video Temporal
+        'finding_temporal_early_ai': '⚡ Rapid detection: AI signals identified in the first frames of the video',
+        'finding_temporal_high_mean': 'High average frame score ({score}%) — strong indication of AI generation',
+        'finding_temporal_high_var': 'High variation between frames — possible temporal inconsistency of generative AI',
+        'finding_temporal_low_var': 'Very uniform scores between frames — suspicious synthetic consistency',
+        'finding_temporal_natural': 'Temporal analysis within normal parameters for captured video',
+        # DL Classifier
+        'finding_dl_high_conf': 'Neural network classified as AI with {conf}% confidence — deep patterns identified',
+        'finding_dl_mod_conf': 'Neural classifier detected AI generation signals ({conf}%)',
+        'finding_dl_low_conf': 'Moderate AI signals detected ({conf}% AI vs {real}% Real)',
+        'finding_dl_real': 'Neural classifier identified as authentic content ({conf}%)',
     },
     'es': {
         'title': 'Laboratorio Móvil de Análisis Forense de IA',
@@ -405,6 +481,44 @@ TRANSLATIONS = {
         'country': 'País',
         'access_volume': 'Volumen de Accesos',
         'back_to_home': 'Volver al Inicio',
+        # Gradient
+        'finding_grad_oversmoothed': 'Gradientes excesivamente suaves: los modelos de difusión suavizan artificialmente las transiciones entre regiones',
+        'finding_grad_edge_coherence': 'Coherencia de bordes excesiva: las IA generativas producen bordes alineados artificialmente',
+        'finding_grad_sharp_transitions': 'Transiciones abruptas de entropía entre regiones: incompatible con la captagem óptica real',
+        'finding_grad_halos': 'Halos detectados alrededor de los bordas: artefacto de sombra sintética producido por redes neuronales',
+        'finding_grad_regular_texture': 'Textura excesivamente regular sin microvariaciones naturales: patrón de superficie "demasiado perfecto"',
+        'finding_grad_natural': 'Patrones de gradiente y transiciones compatibles con captura óptica real',
+        # Statistical
+        'finding_stat_low_entropy': 'Entropía de información anormalmente baja: indica falta de complejidad estocástica',
+        'finding_stat_high_kurtosis': 'Curtosis excesiva en la distribución de píxeles: firma de procesamiento no lineal',
+        'finding_stat_unnatural_dist': 'Distribución estadística no natural: desviación significativa de los patrones de ruido de cámara',
+        'finding_stat_natural': 'Distribución estadística compatible con imagen fotográfica natural',
+        # Wavelet
+        'finding_wavelet_hf_anomaly': 'Anomalías detectadas en los coeficientes de Wavelet de alta frecuencia',
+        'finding_wavelet_subband_imbalance': 'Desequilibrio entre subbandas de frecuencia: indica procesamiento sintético',
+        'finding_wavelet_natural': 'Análisis de Wavelet compatible con contenido capturado por sensor real',
+        # Metadata
+        'finding_meta_software': 'Los metadatos indican procesamiento por software: {software}',
+        'finding_meta_no_exif': 'Ausencia total de metadatos EXIF: común en IA o redes sociales',
+        'finding_meta_camera': 'Cámara detectada: {camera} ({model})',
+        'finding_meta_natural': 'Metadatos compatibles con captura por cámara digital',
+        # HV Score
+        'finding_hv_asymmetry': 'Asimetría marcada entre los ejes horizontal y vertical: firma de reconstrucción neural',
+        'finding_hv_natural': 'Proporción de ejes compatible con el muestreo natural del sensor',
+        # Texture
+        'finding_texture_synthetic': 'Textura de microdetalles identificada como sintética: ausencia de grano orgánico',
+        'finding_texture_natural': 'Textura de superficie compatible con materia orgánica y ruido de sensor',
+        # Video Temporal
+        'finding_temporal_early_ai': '⚡ Detección rápida: señales de IA identificadas en los primeros cuadros del video',
+        'finding_temporal_high_mean': 'Puntuación promedio de cuadros alta ({score}%): fuerte indicación de generación por IA',
+        'finding_temporal_high_var': 'Alta variación entre cuadros: posible inconsistencia temporal de IA generativa',
+        'finding_temporal_low_var': 'Puntuaciones muy uniformes entre cuadros: consistencia sintética sospechosa',
+        'finding_temporal_natural': 'Análisis temporal dentro de los parámetros normales para video capturado',
+        # DL Classifier
+        'finding_dl_high_conf': 'Red neuronal clasificada como IA con {conf}% de confianza: patrones profundos identificados',
+        'finding_dl_mod_conf': 'Clasificador neuronal detectó señales de generación de IA ({conf}%)',
+        'finding_dl_low_conf': 'Señales de IA moderadas detectadas ({conf}% IA vs {real}% Real)',
+        'finding_dl_real': 'El clasificador neuronal se identificó como contenido auténtico ({conf}%)',
     },
     'fr': {
         'title': 'Laboratoire Mobile d\'Analyse Forensique IA',
@@ -539,6 +653,44 @@ TRANSLATIONS = {
         'country': 'Pays',
         'access_volume': 'Volume d\'Accès',
         'back_to_home': 'Retour à l\'Accueil',
+        # Gradient
+        'finding_grad_oversmoothed': 'Gradients excessivement lisses — les modèles de diffusion lissent artificiellement les transitions',
+        'finding_grad_edge_coherence': 'Cohérence excessive des bords — les IA génératives produisent des bords artificiellement alignés',
+        'finding_grad_sharp_transitions': 'Transitions d\'entropie abruptes entre les régions',
+        'finding_grad_halos': 'Halos détectés autour des bords — artefact d\'ombre synthétique produit par des réseaux neuronaux',
+        'finding_grad_regular_texture': 'Texture excessivement régulière sans micro-variations naturelles',
+        'finding_grad_natural': 'Modèles de gradient et transitions compatibles avec une capture optique réelle',
+        # Statistical
+        'finding_stat_low_entropy': 'Entropie de l\'information anormalement basse — indique un manque de complexité stochastique',
+        'finding_stat_high_kurtosis': 'Curtose excessive dans la distribution des pixels',
+        'finding_stat_unnatural_dist': 'Distribution statistique non naturelle — écart significatif par rapport aux bruits de caméra',
+        'finding_stat_natural': 'Distribution statistique compatible avec une image photographique naturelle',
+        # Wavelet
+        'finding_wavelet_hf_anomaly': 'Anomalies détectées dans les coefficients Wavelet haute fréquence',
+        'finding_wavelet_subband_imbalance': 'Déséquilibre entre les sous-bandes de fréquence',
+        'finding_wavelet_natural': 'Analyse Wavelet compatible avec le contenu capturé par un capteur réel',
+        # Metadata
+        'finding_meta_software': 'Les métadonnées indiquent un traitement par logiciel : {software}',
+        'finding_meta_no_exif': 'Absence totale de métadonnées EXIF — courant pour l\'IA ou les réseaux sociaux',
+        'finding_meta_camera': 'Caméra détectée : {camera} ({model})',
+        'finding_meta_natural': 'Métadonnées compatibles avec une capture par caméra numérique',
+        # HV Score
+        'finding_hv_asymmetry': 'Asymétrie marquée entre les axes horizontal et vertical',
+        'finding_hv_natural': 'Rapport d\'axes compatible avec un échantillonnage naturel du capteur',
+        # Texture
+        'finding_texture_synthetic': 'Texture de micro-détails identifiée comme synthétique',
+        'finding_texture_natural': 'Texture de surface compatible avec la matière organique et le bruit du capteur',
+        # Video Temporal
+        'finding_temporal_early_ai': '⚡ Détection rapide : signaux IA identifiés dans les premières images de la vidéo',
+        'finding_temporal_high_mean': 'Score moyen des images élevé ({score}%) — forte indication de génération par IA',
+        'finding_temporal_high_var': 'Forte variation entre les images — possible inconsistance temporelle',
+        'finding_temporal_low_var': 'Scores très uniformes entre les images — consistance synthétique suspecte',
+        'finding_temporal_natural': 'Analyse temporelle dans les paramètres normaux pour une vidéo capturée',
+        # DL Classifier
+        'finding_dl_high_conf': 'Réseau neuronal classé comme IA avec {conf}% de confiance',
+        'finding_dl_mod_conf': 'Le classificateur neuronal a détecté des signaux de génération IA ({conf}%)',
+        'finding_dl_low_conf': 'Signaux IA modérés détectés ({conf}% IA vs {real}% Real)',
+        'finding_dl_real': 'Le classificateur neuronal a identifié comme contenu authentique ({conf}%)',
     },
     'de': {
         'title': 'Mobiles Labor für Forensische KI-Analyse',
@@ -673,5 +825,43 @@ TRANSLATIONS = {
         'country': 'Land',
         'access_volume': 'Anzahl der Zugriffe',
         'back_to_home': 'Zurück zum Start',
+        # Gradient
+        'finding_grad_oversmoothed': 'Übermäßig glatte Gradienten — Diffusionsmodelle glätten Übergänge künstlich',
+        'finding_grad_edge_coherence': 'Übermäßige Kantenkohärenz — Generative KIs erzeugen künstlich ausgerichtete Kanten',
+        'finding_grad_sharp_transitions': 'Abrupte Entropieübergänge zwischen Regionen',
+        'finding_grad_halos': 'Halos um Kanten erkannt — synthetisches Schattenartefakt neuronaler Netze',
+        'finding_grad_regular_texture': 'Übermäßig regelmäßige Textur ohne natürliche Mikrovariationen',
+        'finding_grad_natural': 'Gradientenmuster und Übergänge kompatibel mit echter optischer Erfassung',
+        # Statistical
+        'finding_stat_low_entropy': 'Abnormal niedrige Informationsentropie — deutet auf fehlende stochastische Komplexität hin',
+        'finding_stat_high_kurtosis': 'Übermäßige Kurtosis in der Pixelverteilung',
+        'finding_stat_unnatural_dist': 'Unnatürliche statistische Verteilung — deutliche Abweichung von Kamera-Rauschmustern',
+        'finding_stat_natural': 'Statistische Verteilung kompatibel mit natürlichem fotografischem Bild',
+        # Wavelet
+        'finding_wavelet_hf_anomaly': 'Anomalien in hochfrequenten Wavelet-Koeffizienten erkannt',
+        'finding_wavelet_subband_imbalance': 'Ungleichgewicht zwischen Frequenz-Subbändern',
+        'finding_wavelet_natural': 'Wavelet-Analyse kompatibel mit echten Sensordaten',
+        # Metadata
+        'finding_meta_software': 'Metadaten deuten auf Softwareverarbeitung hin: {software}',
+        'finding_meta_no_exif': 'Vollständiges Fehlen von EXIF-Metadaten — typisch für KI oder soziale Medien',
+        'finding_meta_camera': 'Kamera erkannt: {camera} ({model})',
+        'finding_meta_natural': 'Metadaten kompatibel mit digitaler Kameraerfassung',
+        # HV Score
+        'finding_hv_asymmetry': 'Starke Asymmetrie zwischen horizontaler und vertikaler Achse',
+        'finding_hv_natural': 'Achsenverhältnis kompatibel mit natürlicher Sensorabtastung',
+        # Texture
+        'finding_texture_synthetic': 'Mikrodetail-Textur als synthetisch identifiziert',
+        'finding_texture_natural': 'Oberflächentextur kompatibel mit organischer Materie und Sensorrauschen',
+        # Video Temporal
+        'finding_temporal_early_ai': '⚡ Schnelle Erkennung: KI-Signale in den ersten Videoframes identifiziert',
+        'finding_temporal_high_mean': 'Hoher durchschnittlicher Frame-Score ({score}%) — starker Hinweis auf KI-Generierung',
+        'finding_temporal_high_var': 'Hohe Variation zwischen Frames — mögliche zeitliche Inkonsistenz von generativer KI',
+        'finding_temporal_low_var': 'Sehr gleichmäßige Scores zwischen Frames — verdächtige synthetische Konsistenz',
+        'finding_temporal_natural': 'Zeitliche Analyse innerhalb normaler Parameter für aufgenommenes Video',
+        # DL Classifier
+        'finding_dl_high_conf': 'Neuronales Netz stufte mit {conf}% Vertrauen als KI ein',
+        'finding_dl_mod_conf': 'Neuronaler Klassifikator erkannte KI-Generierungssignale ({conf}%)',
+        'finding_dl_low_conf': 'Moderate KI-Signale erkannt ({conf}% KI vs {real}% Real)',
+        'finding_dl_real': 'Neuronaler Klassifikator identifizierte als authentischen Inhalt ({conf}%)',
     }
 }

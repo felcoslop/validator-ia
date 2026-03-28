@@ -108,15 +108,15 @@ def analyze(image_np):
     }
 
     if h_peaks + v_peaks > 2:
-        details['findings'].append(f'Picos periódicos nos eixos H/V ({h_peaks}H + {v_peaks}V) — artefatos de processamento por blocos característicos de arquiteturas neurais com atenção em patches (Vision Transformers) ou convoluções com stride fixo')
+        details['findings'].append({'key': 'finding_temporal_low_var'}) # Reusing as periodic peak indicator
     if mean_smoothness > 0.3:
-        details['findings'].append('Perfis espectrais H/V não-suaves — redes generativas criam perturbações periódicas nos eixos horizontal e vertical, incompatíveis com a distribuição espectral isotrópica de cenas naturais')
+        details['findings'].append({'key': 'finding_hv_asymmetry'})
     if anisotropy > 0.5:
-        details['findings'].append(f'Alta anisotropia H/V (index: {anisotropy:.3f}) — indica convolução separável usada internamente por modelos como Stable Diffusion, que processa dimensões H e V de forma independente')
+        details['findings'].append({'key': 'finding_hv_asymmetry'})
     if anomaly_score > 0.5:
-        details['findings'].append('Anomalias espectrais significativas nos eixos H e V — frequências que não existem em imagens ópticas reais, criadas pelo processo de denoising iterativo do modelo generativo')
+        details['findings'].append({'key': 'finding_hv_asymmetry'})
     if not details['findings']:
-        details['findings'].append('Distribuicão espectral H/V compatível com captura real — sem artefatos de processamento neural nos eixos')
+        details['findings'].append({'key': 'finding_hv_natural'})
 
     # UI/Screenshot Detection Mitigation (UI is all H and V lines)
     ui_factor = utils.detect_ui_content(image_np)

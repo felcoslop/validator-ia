@@ -98,17 +98,17 @@ def analyze(image_np):
     }
 
     if grad_cv < 0.5:
-        details['findings'].append('Gradientes excessivamente suaves — modelos de difusão suavizam transições entre regiões de forma artificial, eliminando as variações ópticas naturais de uma lente real (aberração cromática, difração)')
+        details['findings'].append({'key': 'finding_grad_oversmoothed'})
     if edge_coherence > 0.4:
-        details['findings'].append('Coerência de bordas excessiva — em imagens reais, bordas têm direções variadas; IAs generativas produzem bordas artificialmente alinhadas, característica de convoluções neurais')
+        details['findings'].append({'key': 'finding_grad_edge_coherence'})
     if transition_score > 0.5:
-        details['findings'].append('Transições abruptas de entropia entre regiões — incompatível com a Point Spread Function (PSF) de lentes reais; indica processamento por rede neural')
+        details['findings'].append({'key': 'finding_grad_sharp_transitions'})
     if halo_score > 0.5:
-        details['findings'].append('Halos detectados ao redor de bordas — artefato de sombra sintética produzido por redes neurais que não simulam corretamente a dispersão de luz natural')
+        details['findings'].append({'key': 'finding_grad_halos'})
     if regularity > 0.5:
-        details['findings'].append('Textura excessivamente regular sem micro-variações naturais — IAs generativas produzem superfícies "perfeitas demais", sem grãos, poros ou imperfeições que existem em toda foto real')
+        details['findings'].append({'key': 'finding_grad_regular_texture'})
     if not details['findings']:
-        details['findings'].append('Padrões de gradiente e transições compatíveis com captura óptica real — sem suavização artificial detectada')
+        details['findings'].append({'key': 'finding_grad_natural'})
 
     # UI/Screenshot Detection Mitigation
     ui_factor = utils.detect_ui_content(image_np)

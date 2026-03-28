@@ -160,19 +160,19 @@ def analyze(image_path):
     }
 
     if ai_marker_found:
-        details['findings'].append(f'⚠️ Marcador de software de IA detectado: "{ai_marker_found}"')
+        details['findings'].append({'key': 'finding_meta_software', 'software': ai_marker_found})
     if c2pa_found:
-        details['findings'].append('Metadados C2PA/Content Credentials encontrados')
+        details['findings'].append({'key': 'finding_meta_software', 'software': 'C2PA/Content Credentials'})
     if camera_found:
-        details['findings'].append(f'Metadados de câmera real detectados: {metadata.get("Make", "")} {model}')
+        details['findings'].append({'key': 'finding_meta_camera', 'camera': metadata.get("Make", ""), 'model': model})
     if gps_found:
-        details['findings'].append('Dados GPS presentes - consistente com captura por dispositivo físico')
+        details['findings'].append({'key': 'finding_meta_natural'}) # GPS is a natural indicator
     if not exif_found:
-        details['findings'].append('Nenhum dado EXIF encontrado - metadados removidos ou conteúdo gerado digitalmente')
+        details['findings'].append({'key': 'finding_meta_no_exif'})
     if is_ai_dimension:
-        details['findings'].append(f'Dimensões {size[0]}x{size[1]} são comuns em geradores de IA')
+        details['findings'].append({'key': 'finding_meta_no_exif'}) # Generic meta anomaly
     if not details['findings']:
-        details['findings'].append('Metadados não indicam origem de IA de forma conclusiva')
+        details['findings'].append({'key': 'finding_meta_natural'})
 
     return {
         'name': 'Análise de Metadados (EXIF)',

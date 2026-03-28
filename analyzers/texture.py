@@ -96,17 +96,17 @@ def analyze(image_np):
     }
 
     if micro_score > 0.5:
-        details['findings'].append('Micro-textura ausente — modelos de difusão eliminam poros, grãos de pele e imperfeições naturais, produzindo superfícies artificialmente lisas que não existem em fotografias reais')
+        details['findings'].append({'key': 'finding_texture_synthetic'})
     if lap_score > 0.3:
-        details['findings'].append('Nitidez distribuída de forma não-natural — IAs aplicam suavização global uniforme; câmeras reais têm profundidade de campo variável que cria transições naturais entre áreas focadas e desfocadas')
+        details['findings'].append({'key': 'finding_texture_synthetic'})
     if color_score > 0.4:
-        details['findings'].append('Correlação anômala entre canais de cor (R/G/B) — modelos generativos processam canais de cor de forma acoplada, produzindo correlações inter-canal que não existem em sensores Bayer reais')
+        details['findings'].append({'key': 'finding_texture_synthetic'}) # Using as generic synth texture
     if lbp_score > 0.3:
-        details['findings'].append('Textura excessivamente uniforme entre regiões — a IA produz padrões repetitivos e homogêneos; câmeras reais capturam variância natural única em cada área da imagem')
+        details['findings'].append({'key': 'finding_texture_synthetic'})
     if patch_score > 0.3:
-        details['findings'].append('Consistência excessiva entre patches da imagem — ausência de variação natural de iluminação, sombra e textura que existe em toda captura óptica real')
+        details['findings'].append({'key': 'finding_texture_synthetic'})
     if not details['findings']:
-        details['findings'].append('Micro-texturas e detalhes compatíveis com fotografia real — variação natural e profundidade de campo presentes')
+        details['findings'].append({'key': 'finding_texture_natural'})
 
     return {
         'name': 'Análise de Textura (AI)',
