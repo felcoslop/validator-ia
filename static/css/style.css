@@ -618,6 +618,12 @@ body {
     background: #fafafa;
 }
 
+.vm {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .vm-l {
     font-size: 10px;
     color: var(--text-ghost);

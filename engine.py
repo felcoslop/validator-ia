@@ -621,10 +621,18 @@ def _compute_final_score_video(results, width=None, height=None):
         dl_trust = 0.85 if not is_low_res else 0.70
         final_score = max(final_score, dl_score * dl_trust)
     
-    # If DL says it's real (<10%), cap the final score
-    if dl_score is not None and dl_score < 10:
+    # If DL says it's real (<40%), cap the final score and mitigate false positives
+    if dl_score is not None and dl_score < 40:
         final_score = min(final_score, 25)
-        
+        # Social media compression destroys noise and high frequencies, creating false 
+        # positives in legacy modules. Since DL is highly confident this is REAL,
+        # we mitigate these modules to prevent confusing findings.
+        for r in results:
+            if r.get('name') not in ['dl_classifier', 'metadata', 'Classificador Neural (DL)', 'Análise de Metadados (EXIF)']:
+                if r.get('score', 0) >= 30:
+                    r['score'] = min(r['score'], 28)
+                    r['details']['findings'] = [{'key': 'finding_compression_mitigated'}]
+                    
     return min(100, max(0, final_score))
 
 

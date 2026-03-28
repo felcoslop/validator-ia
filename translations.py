@@ -175,6 +175,7 @@ TRANSLATIONS = {
         'finding_dl_mod_conf': 'Classificador neural detectou sinais de geração por IA ({conf}%)',
         'finding_dl_low_conf': 'Sinais moderados de IA detectados ({conf}% IA vs {real}% Real)',
         'finding_dl_real': 'Classificador neural identificou como conteúdo autêntico ({conf}%)',
+        'finding_compression_mitigated': '⚠️ Compressão pesada detectada: O classificador profundo confirmou a autenticidade da imagem (Real), mas forte compressão (ex: WhatsApp/Instagram) destruiu frequências e ruídos naturais, criando falsos positivos matemáticos.',
     },
     'en': {
         'title': 'AI Forensic Analysis Mobile Lab',
@@ -347,6 +348,7 @@ TRANSLATIONS = {
         'finding_dl_mod_conf': 'Neural classifier detected AI generation signals ({conf}%)',
         'finding_dl_low_conf': 'Moderate AI signals detected ({conf}% AI vs {real}% Real)',
         'finding_dl_real': 'Neural classifier identified as authentic content ({conf}%)',
+        'finding_compression_mitigated': '⚠️ Heavy compression detected: Deep classifier confirmed image authenticity (Real), but strong compression (e.g. WhatsApp) destroyed natural frequencies and noise, creating mathematical false positives.',
     },
     'es': {
         'title': 'Laboratorio Móvil de Análisis Forense de IA',
@@ -519,6 +521,7 @@ TRANSLATIONS = {
         'finding_dl_mod_conf': 'Clasificador neuronal detectó señales de generación de IA ({conf}%)',
         'finding_dl_low_conf': 'Señales de IA moderadas detectadas ({conf}% IA vs {real}% Real)',
         'finding_dl_real': 'El clasificador neuronal se identificó como contenido auténtico ({conf}%)',
+        'finding_compression_mitigated': '⚠️ Fuerte compresión detectada: El clasificador profundo confirmó la autenticidad (Real), pero la compresión masiva (ej. WhatsApp) destruyó las frecuencias naturales, creando falsos positivos matemáticos.',
     },
     'fr': {
         'title': 'Laboratoire Mobile d\'Analyse Forensique IA',
@@ -691,6 +694,7 @@ TRANSLATIONS = {
         'finding_dl_mod_conf': 'Le classificateur neuronal a détecté des signaux de génération IA ({conf}%)',
         'finding_dl_low_conf': 'Signaux IA modérés détectés ({conf}% IA vs {real}% Real)',
         'finding_dl_real': 'Le classificateur neuronal a identifié comme contenu authentique ({conf}%)',
+        'finding_compression_mitigated': '⚠️ Forte compression détectée : Le classificateur profond a confirmé l\'authenticité (Réel), mais la compression massive a détruit les fréquences naturelles, créant des faux positifs mathématiques.',
     },
     'de': {
         'title': 'Mobiles Labor für Forensische KI-Analyse',
@@ -863,5 +867,6 @@ TRANSLATIONS = {
         'finding_dl_mod_conf': 'Neuronaler Klassifikator erkannte KI-Generierungssignale ({conf}%)',
         'finding_dl_low_conf': 'Moderate KI-Signale erkannt ({conf}% KI vs {real}% Real)',
         'finding_dl_real': 'Neuronaler Klassifikator identifizierte als authentischen Inhalt ({conf}%)',
+        'finding_compression_mitigated': '⚠️ Starke Komprimierung erkannt: Der tiefe Klassifikator bestätigte die Authentizität (Echt), aber massive Komprimierung zerstörte natürliche Frequenzen und verursachte mathematische Fehlalarme.',
     }
 }

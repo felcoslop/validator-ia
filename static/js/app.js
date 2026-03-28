@@ -98,6 +98,13 @@
     btnRemove.addEventListener('click', clearFile);
     btnAnalyze.addEventListener('click', () => {
         if (!selectedFile) return;
+
+        // Skip the waiting modal purely for local development
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            startAnalysis();
+            return;
+        }
+
         const adModal = document.getElementById('ad-modal');
         const countdownEl = document.getElementById('ad-countdown');
         const statusEl = document.getElementById('ad-status-text');
