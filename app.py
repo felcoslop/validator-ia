@@ -48,6 +48,12 @@ def get_user_lang():
 def inject_translate():
     """Inject translation helper into templates."""
     def _(key, **kwargs):
+        if isinstance(key, dict):
+            # If a dict is passed as first arg, recursively call with its contents
+            params = key.copy()
+            k = params.pop('key', '')
+            return _(k, **params)
+            
         lang = get_user_lang()
         text = TRANSLATIONS[lang].get(key, key)
         try:
