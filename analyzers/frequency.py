@@ -106,17 +106,17 @@ def analyze(image_np):
     }
 
     if beta < 1.2 or beta > 3.5:
-        details['findings'].append(f'Espectro de frequência incompatível com imagem natural (β={beta:.2f}). Modelos generativos como Stable Diffusion e DALL-E produzem espectros com decaimento anômalo, diferente do padrão 1/f² de câmeras reais')
+        details['findings'].append({'key': 'finding_freq_incompatible', 'beta': f'{beta:.2f}'})
     if peak_score > 2:
-        details['findings'].append(f'Detectados {peak_score} picos periódicos no espectro de Fourier — assinatura característica de redes neurais com camadas de upsampling (GAN/Diffusion), que criam artefatos de grade invisíveis ao olho humano')
+        details['findings'].append({'key': 'finding_freq_periodic_peaks', 'count': int(peak_score)})
     if hf_ratio > 0.15:
-        details['findings'].append('Excesso de energia nas altas frequências — padrão típico de sharpening artificial aplicado por modelos generativos para simular nitidez de câmera')
+        details['findings'].append({'key': 'finding_freq_hf_excess'})
     elif hf_ratio < 0.01:
-        details['findings'].append('Ausência anormal de altas frequências — indica suavização excessiva característica de modelos de difusão, que eliminam micro-detalhes naturais como poros, grãos e ruído de sensor')
+        details['findings'].append({'key': 'finding_freq_hf_absence'})
     if spectral_flatness > 0.6:
-        details['findings'].append('Espectro plano nas altas frequências — imagens reais apresentam decaimento natural; espectro plano é assinatura de processamento por rede neural')
+        details['findings'].append({'key': 'finding_freq_flat_hf'})
     if not details['findings']:
-        details['findings'].append('Distribuição espectral compatível com captura por câmera real — sem artefatos de processamento neural detectados')
+        details['findings'].append({'key': 'finding_freq_natural'})
 
     # UI/Screenshot Detection Mitigation (UI has high periodic patterns naturally)
     ui_factor = utils.detect_ui_content(image_np)
@@ -124,7 +124,7 @@ def analyze(image_np):
     if ui_factor > 0.6:
         mitigation = int(score * 0.4 * ui_factor)
         score -= mitigation
-        details['findings'].append(f'Interface Digital detectada ({int(ui_factor*100)}%) - picos periódicos mitigados')
+        details['findings'].append({'key': 'finding_ui_detected', 'percent': int(ui_factor*100)})
 
     return {
         'name': 'Análise de Frequência (FFT)',

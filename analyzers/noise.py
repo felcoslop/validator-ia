@@ -103,30 +103,29 @@ def analyze(image_np):
     }
 
     if noise_var < 5e-4:
-        details['findings'].append('Nível de ruído incompatível com sensor real — câmeras digitais produzem ruído térmico e shot noise mensurável. A ausência desse ruído indica que a imagem foi gerada sinteticamente por modelo de difusão')
+        details['findings'].append({'key': 'finding_noise_incompatible'})
     elif noise_var > 0.01:
-        details['findings'].append('Ruído excessivo detectado — padrão atípico que pode indicar pós-processamento pesado ou adição artificial de textura por rede generativa')
+        details['findings'].append({'key': 'finding_noise_excessive'})
     if var_of_vars < 0.05:
-        details['findings'].append('Variância do ruído uniforme em toda a imagem — em fotos reais, áreas escuras têm mais ruído que áreas claras (ruído dependente de sinal). Uniformidade é assinatura de geração por IA')
+        details['findings'].append({'key': 'finding_noise_uniform'})
     elif var_of_vars > 2.0:
-        details['findings'].append('Variância do ruído altamente irregular entre regiões — indica possível composição ou manipulação de diferentes fontes')
+        details['findings'].append({'key': 'finding_noise_irregular'})
     if autocorr_score > 0.5:
-        details['findings'].append('Padrões periódicos detectados no ruído residual — assinatura de camadas convolucionais de redes neurais generativas')
+        details['findings'].append({'key': 'finding_noise_periodic'})
     if gaussianity < 0.6:
-        details['findings'].append('Distribuição do ruído não-gaussiana — sensores de câmera reais produzem ruído gaussiano; desvio indica processamento sintético')
+        details['findings'].append({'key': 'finding_noise_non_gaussian'})
     if structure_score > 0.4:
-        details['findings'].append('Estrutura repetitiva no ruído residual — artefato de arquitetura neural (blocos de atenção ou convolução)')
+        details['findings'].append({'key': 'finding_noise_structured'})
     if not details['findings']:
-        details['findings'].append('Perfil de ruído compatível com sensor de câmera digital real — sem anomalias sintéticas detectadas')
+        details['findings'].append({'key': 'finding_noise_natural'})
 
     # UI/Screenshot Detection Mitigation (PRNU doesn't exist for UI)
     ui_factor = utils.detect_ui_content(image_np)
     
     if ui_factor > 0.6:
-        # If it's pure UI, noise flags are invalid
         mitigation = int(score * 0.6 * ui_factor)
         score -= mitigation
-        details['findings'].append(f'Interface Digital detectada ({int(ui_factor*100)}%) - ruído "clean" ignorado')
+        details['findings'].append({'key': 'finding_ui_detected', 'percent': int(ui_factor*100)})
 
     return {
         'name': 'Análise de Ruído (PRNU)',

@@ -11,3 +11,4 @@ reportlab==4.4.0
 yt-dlp==2026.3.17
 torch
 transformers
+requests

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ForensicAI — Detecção de Mídias Sintéticas</title>
-    <meta name="description" content="Sistema forense avançado para detecção de imagens e vídeos gerados por IA">
+    <title>{{ _('title') }} | ForensicAI</title>
+    <meta name="description" content="{{ _('subtitle') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -30,13 +30,20 @@
                 <div class="logo-icon">F</div>
                 <div>
                     <div class="logo-title">Forensic<span class="accent">AI</span></div>
-                    <div class="logo-sub">Reverse Engineering Lab</div>
+                    <div class="logo-sub">{{ _('reverse_engineering_lab') }}</div>
                 </div>
             </a>
-            <a href="#" onclick="openScanner(); return false;" class="btn-validate-link">
-                <svg width="14" height="14"><use href="#icon-shield"/></svg>
-                Validar Análise
-            </a>
+            <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
+                <div class="lang-selector">
+                    {% for lang in ['pt', 'en', 'es', 'fr', 'de'] %}
+                    <a href="/set-lang/{{ lang }}" class="lang-link {% if current_lang == lang %}active{% endif %}" title="{{ lang.upper() }}">{{ lang.upper() }}</a>
+                    {% endfor %}
+                </div>
+                <a href="#" onclick="openScanner(); return false;" class="btn-validate-link">
+                    <svg width="14" height="14"><use href="#icon-shield"/></svg>
+                    {{ _('validate_analysis') }}
+                </a>
+            </div>
         </div>
     </header>
 
@@ -44,14 +51,14 @@
         <!-- Upload -->
         <section id="sec-upload">
             <div class="section-title">
-                <h2>Análise Forense de Mídia</h2>
-                <p>Laboratório de identificação de artefatos em mídias geradas por Inteligência Artificial</p>
+                <h2>{{ _('title') }}</h2>
+                <p>{{ _('subtitle') }}</p>
             </div>
 
             <!-- TABS -->
             <div class="upload-tabs">
-                <button class="tab-btn active" data-tab="upload">Arquivo Local</button>
-                <button class="tab-btn" data-tab="url">Link de Vídeo</button>
+                <button class="tab-btn active" data-tab="upload">{{ _('upload_media') }}</button>
+                <button class="tab-btn" data-tab="url">{{ _('analyze_url') }}</button>
             </div>
 
             <!-- TAB UPLOAD -->
@@ -61,13 +68,13 @@
                         <div class="dz-icon">
                             <svg width="48" height="48" stroke="currentColor"><use href="#icon-upload"/></svg>
                         </div>
-                        <h3>Arraste seu arquivo aqui</h3>
-                        <p>ou clique para selecionar do seu computador</p>
+                        <h3>{{ _('drop_zone_title') }}</h3>
+                        <p>{{ _('drop_zone_sub') }}</p>
                         <div class="formats">
                             <span>JPG</span><span>PNG</span><span>WebP</span><span>BMP</span>
                             <span>MP4</span><span>AVI</span><span>MOV</span><span>WebM</span>
                         </div>
-                        <p style="font-size: 11px; margin-top: 12px; opacity: 0.6">Limite de tamanho: 50MB</p>
+                        <p style="font-size: 11px; margin-top: 12px; opacity: 0.6">{{ _('file_limit') }}: 50MB</p>
                     </div>
                     <input type="file" id="file-input" accept="image/*,video/*" hidden>
                 </div>
@@ -76,10 +83,10 @@
             <!-- TAB URL -->
             <div id="tab-url" class="tab-content">
                 <div class="url-input-container">
-                    <input type="text" id="video-url" placeholder="Cole o link do YouTube, Twitter, Instagram, TikTok ou Facebook...">
+                    <input type="text" id="video-url" placeholder="{{ _('url_placeholder') }}">
                     <button id="btn-fetch-url" class="btn-primary">
                         <svg width="18" height="18" stroke="white" style="margin-right:8px"><use href="#icon-search"/></svg>
-                        Baixar e Analisar
+                        {{ _('analyze_url') }}
                     </button>
                     
                     <div class="social-platforms">
@@ -122,7 +129,7 @@
                 <div style="text-align:center; margin-top: 24px;">
                     <button id="btn-analyze" class="btn-primary">
                         <svg width="18" height="18" stroke="white"><use href="#icon-search"/></svg>
-                        Iniciar Análise Forense
+                        {{ _('analyze_media') }}
                     </button>
                 </div>
             </div>
@@ -132,22 +139,22 @@
         <section id="sec-loading" class="hidden">
             <div style="text-align:center; padding: 60px 0;">
                 <div class="dna-spinner"></div>
-                <h3 class="loading-title">Processando Matriz Forense</h3>
-                <p id="loading-text" class="loading-sub">Extraindo artefatos de compressão...</p>
+                <h3 class="loading-title">{{ _('processing_matrix') }}</h3>
+                <p id="loading-text" class="loading-sub">{{ _('extracting_artifacts') }}</p>
                 
                 <div class="progress">
                     <div class="progress-fill" id="progress-fill"></div>
                 </div>
                 
                 <div class="load-steps" id="load-steps" style="max-width: 600px; margin: 0 auto;">
-                    <div class="ls" data-i="0">FFT</div>
-                    <div class="ls" data-i="1">PRNU</div>
-                    <div class="ls" data-i="2">ELA</div>
-                    <div class="ls" data-i="3">Gradiente</div>
-                    <div class="ls" data-i="4">Estatística</div>
-                    <div class="ls" data-i="5">Wavelet</div>
-                    <div class="ls" data-i="6">EXIF</div>
-                    <div class="ls" data-i="7">H/V</div>
+                    <div class="ls" data-i="0">{{ _('frequency') }}</div>
+                    <div class="ls" data-i="1">{{ _('noise') }}</div>
+                    <div class="ls" data-i="2">{{ _('ela') }}</div>
+                    <div class="ls" data-i="3">{{ _('gradient') }}</div>
+                    <div class="ls" data-i="4">{{ _('statistical') }}</div>
+                    <div class="ls" data-i="5">{{ _('wavelet') }}</div>
+                    <div class="ls" data-i="6">{{ _('metadata') }}</div>
+                    <div class="ls" data-i="7">{{ _('hv_score') }}</div>
                 </div>
             </div>
         </section>
@@ -155,7 +162,7 @@
 
     <footer class="footer">
         <div class="container">
-            © 2026 ForensicAI • Professional Forensic Analysis System
+            © 2026 ForensicAI • {{ _('footer_text') }}
         </div>
     </footer>
 
@@ -163,16 +170,16 @@
     <div id="ad-modal" class="ad_modal_wrapper ad-modal">
         <div class="ad-content">
             <div class="ad-logo">Forensic<span class="accent">AI</span> <span style="font-size: 14px; vertical-align: middle; opacity: 0.7;">PRO</span></div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Preparando matriz de análise forense profunda...</p>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">{{ _('preparing_forensic_matrix') }}</p>
             
             <div class="ad-timer-box">
                 <div id="ad-countdown" class="countdown-circle">10</div>
             </div>
 
-            <p id="ad-status-text" style="font-weight: 600; margin-bottom: 24px; color: var(--accent-blue); font-size: 14px;">Sincronizando vetores de detecção...</p>
+            <p id="ad-status-text" style="font-weight: 600; margin-bottom: 24px; color: var(--accent-blue); font-size: 14px;">{{ _('syncing_detection_vectors') }}</p>
             
-            <button id="close-ad-btn" class="ad-btn" disabled>Acessar Resultados</button>
-            <p style="font-size: 10px; margin-top: 16px; opacity: 0.5;">A análise iniciará automaticamente após o processamento dos modelos.</p>
+            <button id="close-ad-btn" class="ad-btn" disabled>{{ _('access_results') }}</button>
+            <p style="font-size: 10px; margin-top: 16px; opacity: 0.5;">{{ _('analysis_start_notice') }}</p>
         </div>
     </div>
 
@@ -183,8 +190,8 @@
                 <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
             </div>
             <div style="padding: 32px; text-align: center;">
-                <h3 style="margin-bottom: 8px;">Validar QR Code</h3>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">Aponte a câmera para um código QR da ForensicAI</p>
+                <h3 style="margin-bottom: 8px;">{{ _('validate_analysis') }}</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 24px;">{{ _('digital_authenticity_validation') }}</p>
                 <div class="scanner-container">
                     <div id="reader"></div>
                 </div>

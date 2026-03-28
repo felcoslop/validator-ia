@@ -28,16 +28,16 @@ def imread_unicode(path):
 
 
 WEIGHTS = {
-    'Classificador Neural (DL)': 0.50,
-    'Análise de Textura (AI)': 0.10,
-    'Análise de Frequência (FFT)': 0.06,
-    'Análise de Ruído (PRNU)': 0.06,
-    'Análise de Nível de Erro (ELA)': 0.05,
-    'Análise de Gradiente': 0.05,
-    'Análise Estatística': 0.05,
-    'Análise Wavelet (DWT)': 0.05,
-    'Análise de Metadados (EXIF)': 0.04,
-    'Score Horizontal/Vertical': 0.04,
+    'dl_classifier': 0.50,
+    'ai_texture': 0.10,
+    'frequency': 0.06,
+    'noise': 0.06,
+    'ela': 0.05,
+    'gradient': 0.05,
+    'statistical': 0.05,
+    'wavelet': 0.05,
+    'metadata': 0.04,
+    'hv_score': 0.04,
 }
 
 # Max dimension for analysis (optimization: reduce resolution)
@@ -98,13 +98,17 @@ def analyze_image(file_path, eval_id):
 
     for name, mod in analyzers:
         try:
-            results.append(mod.analyze(image_np))
+            res = mod.analyze(image_np)
+            res['name'] = name  # Sync with i18n keys
+            results.append(res)
         except Exception as e:
             results.append(_error_result(name, str(e)))
 
     # Metadata uses file path
     try:
-        results.append(metadata.analyze(file_path))
+        meta_res = metadata.analyze(file_path)
+        meta_res['name'] = 'metadata'
+        results.append(meta_res)
     except Exception as e:
         results.append(_error_result('metadata', str(e)))
 
@@ -232,6 +236,7 @@ def analyze_video(file_path, eval_id, selected_indices=None):
         if dl_results:
             # Use the frame with the highest AI score (most suspicious)
             best_dl = max(dl_results, key=lambda r: r.get('score', 0))
+            best_dl['name'] = 'dl_classifier' # Ensure key
             full_module_results.append(best_dl)
         
         # Heuristic modules on middle frame
@@ -250,7 +255,9 @@ def analyze_video(file_path, eval_id, selected_indices=None):
             ]
             for name, mod in heuristic_modules:
                 try:
-                    full_module_results.append(mod.analyze(mid_resized))
+                    res = mod.analyze(mid_resized)
+                    res['name'] = name  # Force key
+                    full_module_results.append(res)
                 except Exception as e:
                     full_module_results.append(_error_result(name, str(e)))
 
@@ -258,7 +265,7 @@ def analyze_video(file_path, eval_id, selected_indices=None):
     # Video temporal analysis
     temporal_score = _temporal_analysis(frame_results, early_ai_detected)
     full_module_results.append({
-        'name': 'Análise Temporal de Vídeo',
+        'name': 'temporal',
         'score': temporal_score,
         'icon': 'video',
         'details': {
@@ -564,16 +571,16 @@ def _compute_final_score_video(results, width=None, height=None):
         is_low_res = True
         
     video_weights = {
-        'Classificador Neural (DL)': 0.35,
-        'Análise de Textura (AI)': 0.08,
-        'Análise de Frequência (FFT)': 0.05,
-        'Análise de Ruído (PRNU)': 0.05,
-        'Análise de Nível de Erro (ELA)': 0.05,
-        'Análise de Gradiente': 0.04,
-        'Análise Estatística': 0.04,
-        'Análise Wavelet (DWT)': 0.05,
-        'Score Horizontal/Vertical': 0.04,
-        'Análise Temporal de Vídeo': 0.25,
+        'dl_classifier': 0.35,
+        'ai_texture': 0.08,
+        'frequency': 0.05,
+        'noise': 0.05,
+        'ela': 0.05,
+        'gradient': 0.04,
+        'statistical': 0.04,
+        'wavelet': 0.05,
+        'hv_score': 0.04,
+        'temporal': 0.25,
     }
     total_weight = 0
     weighted_sum = 0
@@ -585,16 +592,15 @@ def _compute_final_score_video(results, width=None, height=None):
         score = r.get('score', 50)
 
         # Disregard compression-prone heuristics on low-res video
-        if is_low_res and name in ['Análise de Frequência (FFT)', 'Análise de Ruído (PRNU)', 
-                                 'Score Horizontal/Vertical', 'Análise Wavelet (DWT)']:
-            score *= 0.5  # 50% discount for video context (heavier compression)
+        if is_low_res and name in ['frequency', 'noise', 'hv_score', 'wavelet']:
+            score *= 0.5  # 50% discount for video context
             r['score'] = score
             
         w = video_weights.get(name, 0.05)
         weighted_sum += score * w
         total_weight += w
         
-        if name == 'Classificador Neural (DL)':
+        if name == 'dl_classifier':
             dl_score = score
         elif score > 40:
             high_signals += 1
@@ -625,13 +631,13 @@ def _compute_final_score_video(results, width=None, height=None):
 def _generate_verdict(score, results):
     """Generate verdict with label, color, and key findings — binary: AI or Real."""
     if score >= 60:
-        level, label, confidence, color = 'ai_high', 'Gerado por Inteligência Artificial', 'Alta', '#ef4444'
+        level, label, confidence, color = 'ai_high', 'verdict_ai', 'confidence_high', '#ef4444'
     elif score >= 45:
-        level, label, confidence, color = 'ai_moderate', 'Provavelmente Gerado por IA', 'Moderada', '#f97316'
+        level, label, confidence, color = 'ai_moderate', 'verdict_prob_ai', 'confidence_mod', '#f97316'
     elif score >= 35:
-        level, label, confidence, color = 'ai_low', 'Indícios de Manipulação ou Geração por IA', 'Baixa', '#eab308'
+        level, label, confidence, color = 'ai_low', 'verdict_indicia', 'confidence_low', '#eab308'
     else:
-        level, label, confidence, color = 'real', 'Autêntico / Real', 'Alta', '#22c55e'
+        level, label, confidence, color = 'real', 'verdict_real', 'confidence_high', '#22c55e'
 
     key_findings = []
     for r in results:
@@ -651,16 +657,17 @@ def _generate_verdict(score, results):
 def _error_result(name, error):
     """Error result for failed module."""
     name_map = {
-        'dl_classifier': 'Classificador Neural (DL)',
-        'frequency': 'Análise de Frequência (FFT)',
-        'noise': 'Análise de Ruído (PRNU)',
-        'ela': 'Análise de Nível de Erro (ELA)',
-        'gradient': 'Análise de Gradiente',
-        'statistical': 'Análise Estatística',
-        'wavelet': 'Análise Wavelet (DWT)',
-        'metadata': 'Análise de Metadados (EXIF)',
-        'hv_score': 'Score Horizontal/Vertical',
-        'texture': 'Análise de Textura (AI)',
+        'dl_classifier': 'dl_classifier',
+        'frequency': 'frequency',
+        'noise': 'noise',
+        'ela': 'ela',
+        'gradient': 'gradient',
+        'statistical': 'statistical',
+        'wavelet': 'wavelet',
+        'metadata': 'metadata',
+        'hv_score': 'hv_score',
+        'texture': 'ai_texture',
+        'temporal': 'temporal',
     }
     icons = {
         'dl_classifier': 'brain',

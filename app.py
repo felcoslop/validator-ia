@@ -8,17 +8,70 @@ import json
 import uuid
 import time
 from datetime import datetime
-from flask import Flask, request, render_template, jsonify, send_file, url_for, redirect
+from flask import Flask, request, render_template, jsonify, send_file, url_for, redirect, make_response
 from werkzeug.utils import secure_filename
 import engine
 import pdf_report
 import yt_dlp
 import socket
+import requests
+import traceback
+from translations import TRANSLATIONS
 
 # Set global timeout for network operations
 socket.setdefaulttimeout(60)
 
 app = Flask(__name__)
+
+def get_user_lang():
+    """Determine user language from cookie or IP geolocation."""
+    lang = request.cookies.get('lang')
+    if lang in TRANSLATIONS:
+        return lang
+    
+    # Geolocation fallback (English as default)
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    if ip and ',' in str(ip): ip = ip.split(',')[0].strip()
+    
+    country = get_country_from_ip(ip)
+    
+    # Mapping
+    if country in ['Brazil', 'Portugal']: return 'pt'
+    if country in ['Spain', 'Mexico', 'Argentina', 'Colombia', 'Chile', 'Peru']: return 'es'
+    if country == 'France': return 'fr'
+    if country in ['Germany', 'Austria']: return 'de'
+    
+    return 'en'
+
+# --- Internationalization (i18n) ---
+@app.context_processor
+def inject_translate():
+    """Inject translation helper into templates."""
+    def _(key, **kwargs):
+        lang = get_user_lang()
+        text = TRANSLATIONS[lang].get(key, key)
+        try:
+            return text.format(**kwargs)
+        except Exception:
+            return text
+    return dict(_=_, current_lang=get_user_lang())
+
+def translate_msg(key, **kwargs):
+    """Translate string for non-template responses."""
+    lang = get_user_lang()
+    text = TRANSLATIONS[lang].get(key, key)
+    try:
+        return text.format(**kwargs)
+    except Exception:
+        return text
+
+@app.route('/set-lang/<lang>')
+def set_lang(lang):
+    """Set preferred language in cookie."""
+    if lang not in TRANSLATIONS: lang = 'pt'
+    resp = make_response(redirect(request.referrer or '/'))
+    resp.set_cookie('lang', lang, max_age=60*60*24*30) # 30 days
+    return resp
 
 # Configuration
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -51,6 +104,20 @@ def get_file_type(filename):
     elif ext in ALLOWED_VIDEO_EXTENSIONS:
         return 'video'
     return None
+
+
+def get_country_from_ip(ip):
+    """Resolve country name from IP using ip-api.com (free)."""
+    if not ip or ip in ['127.0.0.1', 'localhost']:
+        return "Localhost"
+    try:
+        # Use a timeout to not block analysis if API is slow
+        response = requests.get(f"http://ip-api.com/json/{ip}", timeout=3).json()
+        if response.get('status') == 'success':
+            return response.get('country', 'Desconhecido')
+    except Exception:
+        pass
+    return "Desconhecido"
 
 
 def save_evaluation(eval_id, data):
@@ -91,17 +158,17 @@ def analyze():
         # Re-using already uploaded file
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], temp_filename)
         if not os.path.exists(filepath):
-            return jsonify({'error': 'Arquivo temporário expirou ou não existe'}), 400
+            return jsonify({'error': translate_msg('temp_file_expired')}), 400
         filename = temp_filename.split('_', 1)[1]
     else:
         # Standard upload
         if 'file' not in request.files:
-            return jsonify({'error': 'Nenhum arquivo enviado'}), 400
+            return jsonify({'error': translate_msg('no_file_uploaded')}), 400
         file = request.files['file']
         if file.filename == '':
-            return jsonify({'error': 'Nenhum arquivo selecionado'}), 400
+            return jsonify({'error': translate_msg('no_file_selected')}), 400
         if not allowed_file(file.filename):
-            return jsonify({'error': 'Tipo de arquivo não suportado'}), 400
+            return jsonify({'error': translate_msg('unsupported_file_type')}), 400
             
         filename = secure_filename(file.filename)
         unique_name = f'{uuid.uuid4().hex}_{filename}'
@@ -138,7 +205,7 @@ def analyze():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return jsonify({'error': f'Erro durante análise: {str(e)}'}), 500
+        return jsonify({'error': f"{translate_msg('error_during_analysis')}: {str(e)}"}), 500
     finally:
         # Clean up only if not waiting for more steps or if explicitly told to
         if not request.form.get('keep'):
@@ -157,7 +224,7 @@ def analyze_url():
     print(f"[*] Rota /api/analyze-url atingida. URL: {url}", flush=True)
 
     if not url:
-        return jsonify({'error': 'URL não fornecida'}), 400
+        return jsonify({'error': translate_msg('invalid_url')}), 400
 
     try:
         # Generate a temporary filename for the downloaded video
@@ -198,6 +265,20 @@ def analyze_url():
         if not os.path.exists(filename):
             print(f"[!] Arquivo não encontrado após download: {filename}", flush=True)
             return jsonify({'error': 'Arquivo de mídia não encontrado após processamento'}), 500
+        # Get requester country for analytics
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if ',' in ip: ip = ip.split(',')[0].strip() # Handle proxy chains
+        country = get_country_from_ip(ip)
+        
+        # Add metadata for dashboard
+        data['request_metadata'] = {
+            'ip': ip,
+            'country': country,
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'user_agent': request.headers.get('User-Agent')
+        }
+        
+        save_evaluation(eval_id, data)
 
         # Pass the final filename (basename) to the next step
         final_basename = os.path.basename(filename)
@@ -298,6 +379,56 @@ def validate_page(eval_id):
 
 
 
+@app.route('/master')
+def master_dashboard():
+    """Admin dashboard with usage statistics."""
+    pin = request.args.get('pin')
+    if pin != '651207':
+        return "Acesso Negado. PIN inválido.", 403
+
+    # Aggregate stats
+    total = 0
+    ai_count = 0
+    real_count = 0
+    countries = {}
+
+    if os.path.exists(DATA_PATH):
+        for filename in os.listdir(DATA_PATH):
+            if filename.endswith('.json'):
+                try:
+                    with open(os.path.join(DATA_PATH, filename), 'r', encoding='utf-8') as f:
+                        eval_data = json.load(f)
+                        total += 1
+                        
+                        # Score-based classification
+                        score = eval_data.get('final_score', 0)
+                        if score >= 35:
+                            ai_count += 1
+                        else:
+                            real_count += 1
+                        
+                        # Geolocation stats
+                        meta = eval_data.get('request_metadata', {})
+                        country = meta.get('country', 'Legado/Desconhecido')
+                        countries[country] = countries.get(country, 0) + 1
+                except Exception:
+                    continue
+
+    # Sort countries by volume
+    sorted_countries = sorted(countries.items(), key=lambda x: x[1], reverse=True)
+
+    stats = {
+        'total': total,
+        'ai_count': ai_count,
+        'real_count': real_count,
+        'ai_percent': round((ai_count / total * 100), 1) if total > 0 else 0,
+        'real_percent': round((real_count / total * 100), 1) if total > 0 else 0,
+        'countries': sorted_countries
+    }
+
+    return render_template('master.html', stats=stats, pin=pin)
+
+
 @app.route('/api/qrcode/<eval_id>')
 def qrcode_image(eval_id):
     """Generate QR code for evaluation URL."""
@@ -324,10 +455,11 @@ def download_pdf(eval_id):
     """Generate and download PDF report."""
     data = load_evaluation(eval_id)
     if not data:
-        return jsonify({'error': 'Avaliação não encontrada'}), 404
+        return jsonify({'error': translate_msg('evaluation_not_found')}), 404
 
     base_url = request.host_url.rstrip('/')
-    pdf_path = pdf_report.generate(data, eval_id, base_url)
+    lang = request.cookies.get('lang', 'pt')
+    pdf_path = pdf_report.generate(data, eval_id, base_url, lang)
 
     return send_file(
         pdf_path,

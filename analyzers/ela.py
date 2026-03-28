@@ -118,19 +118,19 @@ def analyze(image_np):
     }
 
     if cv_ela > 2.0:
-        details['findings'].append('Alta variação no nível de erro — regiões com compressão inconsistente indicam possível composição ou edição localizada')
+        details['findings'].append({'key': 'finding_ela_high_variance'})
     if block_std > 5.0:
-        details['findings'].append('Blocos com níveis de erro muito diferentes — padrão de manipulação: áreas editadas reagem diferentemente à recompressão JPEG')
+        details['findings'].append({'key': 'finding_ela_block_inconsistency'})
     if mean_ela < 1.0:
-        details['findings'].append('ELA extremamente baixo e uniforme — modelos generativos como Stable Diffusion e DALL-E produzem imagens sem artefatos de compressão, gerando ELA próximo de zero em toda a imagem')
+        details['findings'].append({'key': 'finding_ela_low_uniform'})
     elif mean_ela < 2.0:
-        details['findings'].append('ELA suspeitamente baixo — consistente com imagem gerada digitalmente ou pesadamente processada, sem as variações naturais de uma foto capturada')
+        details['findings'].append({'key': 'finding_ela_suspiciously_low'})
     elif mean_ela > 15.0:
-        details['findings'].append('ELA elevado indica recompressão pesada — possível tentativa de mascarar edições')
+        details['findings'].append({'key': 'finding_ela_high_compression'})
     if uniform_ratio > 0.15:
-        details['findings'].append('Regiões extensas com ELA próximo de zero — padrão diagnóstico de conteúdo gerado por IA, onde não há histórico de compressão anterior')
+        details['findings'].append({'key': 'finding_ela_zero_regions'})
     if not details['findings']:
-        details['findings'].append('Análise de nível de erro compatível com imagem fotográfica real — variações de compressão dentro do esperado')
+        details['findings'].append({'key': 'finding_ela_natural'})
 
     return {
         'name': 'Análise de Nível de Erro (ELA)',
