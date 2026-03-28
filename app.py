@@ -29,6 +29,11 @@ def get_user_lang():
     if lang in TRANSLATIONS:
         return lang
     
+    # Header fallback (Browser preference)
+    browser_lang = request.accept_languages.best_match(TRANSLATIONS.keys())
+    if browser_lang:
+        return browser_lang
+        
     # Geolocation fallback (English as default)
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     if ip and ',' in str(ip): ip = ip.split(',')[0].strip()

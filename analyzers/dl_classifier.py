@@ -9,19 +9,16 @@ import cv2
 from PIL import Image
 from io import BytesIO
 
-# Lazy-load the model to avoid slow startup
-_classifier = None
+# Pre-load the classifier for memory sharing (preloading)
+from transformers import pipeline
+_classifier = pipeline(
+    "image-classification",
+    model="umm-maybe/AI-image-detector",
+    device=-1  # CPU
+)
 
 def _get_classifier():
-    """Lazy-load the HuggingFace pipeline (downloads model on first use)."""
-    global _classifier
-    if _classifier is None:
-        from transformers import pipeline
-        _classifier = pipeline(
-            "image-classification",
-            model="umm-maybe/AI-image-detector",
-            device=-1  # CPU (use 0 for GPU)
-        )
+    """Returns the pre-loaded classifier."""
     return _classifier
 
 
