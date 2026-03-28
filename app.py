@@ -168,8 +168,9 @@ def analyze_url():
         # Forensic-grade robust options for social media platforms
         ydl_opts = {
             'outtmpl': f'{filepath_template}.%(ext)s',
-            'format': 'mp4[height<=720]/best[ext=mp4]/best',
-            'max_filesize': 50 * 1024 * 1024,
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+            'merge_output_format': 'mp4',
+            'max_filesize': 250 * 1024 * 1024,
             'quiet': True,
             'no_warnings': True,
             'ignoreerrors': False,
