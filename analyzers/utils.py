@@ -102,7 +102,7 @@ def detect_low_end_sensor(img_np, metadata_dict=None):
         (1600, 1200), (1920, 1080), (2048, 1536)
     ]
     if (w, h) in common_webcam_res or (h, w) in common_webcam_res:
-        score += 0.3 # Increased weight for standard sensor matches
+        score += 0.4 # Sufficient to trigger calibration when paired with low-MP fallback
     
     # Low megapixels check (Webcams/Front cameras rarely exceed 3-5MP)
     # If the image is < 3MP and has no professional EXIF, it's highly likely a low-end sensor
