@@ -421,11 +421,11 @@ def master_dashboard():
     real_count = 0
     countries = {}
 
-    if os.path.exists(DATA_PATH):
-        for filename in os.listdir(DATA_PATH):
+    if os.path.exists(DATA_FOLDER):
+        for filename in os.listdir(DATA_FOLDER):
             if filename.endswith('.json'):
                 try:
-                    with open(os.path.join(DATA_PATH, filename), 'r', encoding='utf-8') as f:
+                    with open(os.path.join(DATA_FOLDER, filename), 'r', encoding='utf-8') as f:
                         eval_data = json.load(f)
                         total += 1
                         
