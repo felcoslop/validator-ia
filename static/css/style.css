@@ -414,6 +414,9 @@ body {
     font-size: 13px;
     font-weight: 600;
     color: var(--accent);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .pf-size {
@@ -639,6 +642,10 @@ body {
     font-size: 13px;
     font-weight: 600;
     color: var(--accent);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 250px;
 }
 
 .mod-card {

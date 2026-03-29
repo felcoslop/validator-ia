@@ -31,28 +31,51 @@ def analyze(video_path, frame_analyzers):
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    # Sample frames (max 10 evenly spaced)
-    n_samples = min(10, total_frames)
-    if n_samples < 2:
-        cap.release()
-        return {
-            'name': 'Análise de Vídeo',
-            'score': 50,
-            'details': {'findings': ['Vídeo muito curto para análise temporal']},
-            'visualization': None,
-            'icon': '🎬'
-        }
-
-    frame_indices = np.linspace(0, total_frames - 1, n_samples, dtype=int)
-    frames = []
-
-    for idx in frame_indices:
+    # Intelligent Frame Selection
+    # Step 1: Sample a larger pool of frames (e.g., 40 distributed frames)
+    pool_size = min(40, total_frames)
+    pool_indices = np.linspace(0, total_frames - 1, pool_size, dtype=int)
+    
+    frame_pool = []
+    for idx in pool_indices:
         cap.set(cv2.CAP_PROP_POS_FRAMES, idx)
         ret, frame = cap.read()
         if ret:
-            frames.append(frame)
-
+            # Score frame by "interestingness" (Laplacian variance = sharpness/detail)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            score = cv2.Laplacian(gray, cv2.CV_64F).var()
+            frame_pool.append({'frame': frame, 'score': score, 'index': idx})
+            
     cap.release()
+    
+    # Step 2: Select the best N frames from the pool
+    # We want sharpest frames, but also temporal diversity
+    if not frame_pool:
+        return {
+            'name': 'Análise de Vídeo',
+            'score': 50,
+            'details': {'findings': ['Falha catastrófica na extração de frames']},
+            'visualization': None,
+            'icon': '🎬'
+        }
+        
+    # Sort by interestingness
+    frame_pool.sort(key=lambda x: x['score'], reverse=True)
+    
+    selected = []
+    min_gap = total_frames // 15 # Ensure selected frames are not too close
+    
+    for f_item in frame_pool:
+        # Check if this frame is too close to already selected ones
+        if any(abs(f_item['index'] - s['index']) < min_gap for s in selected):
+            continue
+        selected.append(f_item)
+        if len(selected) >= 10:
+            break
+            
+    # Sort back by original index for temporal consistency checks
+    selected.sort(key=lambda x: x['index'])
+    frames = [f['frame'] for f in selected]
 
     if len(frames) < 2:
         return {
