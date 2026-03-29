@@ -72,3 +72,32 @@ def detect_ui_content(img):
         return 0.0
     
     return float(min(1.0, (ui_factor - 0.5) * 2))
+
+
+def detect_low_end_sensor(img_np, metadata_dict=None):
+    """
+    Detect if the image likely originates from a low-end sensor (Webcam, USB Camera, etc.)
+    which naturally produces high-noise, flat-frequency patterns similar to AI artifacts.
+    """
+    if img_np is None:
+        return 0.0
+        
+    score = 0.0
+    
+    # 1. Metadata check (strongest signal)
+    if metadata_dict:
+        make = str(metadata_dict.get('Make', '')).lower()
+        model = str(metadata_dict.get('Model', '')).lower()
+        software = str(metadata_dict.get('Software', '')).lower()
+        
+        webcam_keywords = ['webcam', 'usb camera', 'integrated camera', 'front camera', 'ov5648', 'ov8858']
+        if any(kw in make or kw in model or kw in software for kw in webcam_keywords):
+            score += 0.8
+            
+    # 2. Resolution check (webcams are often exactly 720p, 1080p, or 480p)
+    h, w = img_np.shape[:2]
+    common_webcam_res = [(1280, 720), (1920, 1080), (640, 480)]
+    if (w, h) in common_webcam_res or (h, w) in common_webcam_res:
+        score += 0.2
+        
+    return min(1.0, score)

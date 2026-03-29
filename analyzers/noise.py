@@ -17,8 +17,8 @@ def analyze(image_np, mode='image'):
     mode: 'image' for photos, 'video' for video frames.
     Returns score (0-100), details, and visualization.
     """
-    # Convert to float [0,1]
-    img_float = image_np.astype(np.float64) / 255.0
+    # Convert to float32 to save memory on high-resolution images (3072px+)
+    img_float = image_np.astype(np.float32) / 255.0
 
     # Extract noise residual per channel: W = I - f(I)
     residuals = []

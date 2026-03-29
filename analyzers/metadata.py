@@ -111,6 +111,10 @@ def analyze(image_path):
     ]
     is_ai_dimension = size in ai_dimensions
 
+    # Sensor quality check (Webcam mitigation)
+    from . import utils as forensic_utils
+    sensor_score = forensic_utils.detect_low_end_sensor(None, metadata)
+    
     # Score
     score = 0
 
@@ -121,7 +125,8 @@ def analyze(image_path):
         score += 20  # May indicate AI origin with content credentials
 
     if not exif_found:
-        score += 15  # No EXIF is suspicious (but also happens with screenshots)
+        # If no EXIF but common webcam res, don't penalize as heavily
+        score += 5 if sensor_score > 0 else 15
 
     if exif_found and not camera_found and not software_found:
         score += 10
@@ -132,6 +137,9 @@ def analyze(image_path):
     if gps_found:
         score -= 15  # GPS data strongly suggests real camera
 
+    if sensor_score > 0.5:
+        score -= 10  # Dampen if it's a known webcam
+
     if is_ai_dimension:
         score += 15  # Common AI generation sizes
 
@@ -139,7 +147,11 @@ def analyze(image_path):
     dpi = pil_img.info.get('dpi', (72, 72))
     if isinstance(dpi, tuple) and len(dpi) == 2:
         if dpi == (72, 72) or dpi == (96, 96):
-            score += 5  # Generic DPI, slightly suspicious
+            # Most webcams use 72/96 DPI
+            if sensor_score > 0.5:
+                score += 0
+            else:
+                score += 5
 
     score = min(100, max(0, score))
 
@@ -155,6 +167,7 @@ def analyze(image_path):
         'ai_marker': ai_marker_found,
         'c2pa_present': c2pa_found,
         'is_common_ai_size': is_ai_dimension,
+        'sensor_type': 'Webcam/Low-End' if sensor_score > 0.5 else 'Standard',
         'total_exif_tags': len(metadata),
         'findings': []
     }
@@ -163,6 +176,8 @@ def analyze(image_path):
         details['findings'].append({'key': 'finding_meta_software', 'software': ai_marker_found})
     if c2pa_found:
         details['findings'].append({'key': 'finding_meta_software', 'software': 'C2PA/Content Credentials'})
+    if sensor_score > 0.5:
+        details['findings'].append({'key': 'finding_meta_webcam'})
     if camera_found:
         details['findings'].append({'key': 'finding_meta_camera', 'camera': metadata.get("Make", ""), 'model': model})
     if gps_found:

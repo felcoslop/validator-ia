@@ -12,7 +12,7 @@ import cv2
 from PIL import Image
 from io import BytesIO
 
-from analyzers import frequency, noise, ela, gradient, statistical, wavelet, metadata, hv_score, video, texture, dl_classifier
+from analyzers import frequency, noise, ela, gradient, statistical, wavelet, metadata, hv_score, video, texture, dl_classifier, utils as forensic_utils
 
 
 def imread_unicode(path):
@@ -40,18 +40,19 @@ WEIGHTS = {
     'hv_score': 0.04,
 }
 
-# Max dimension for analysis (optimization: reduce resolution)
-ANALYSIS_MAX_DIM = 1024
+# Max dimension for analysis (High-res forensic preservation: 3072px = 9x more pixels than 1024px)
+ANALYSIS_MAX_DIM = 3072
 # Max dimension for thumbnails saved in report
 THUMB_MAX_DIM = 640
 
 
 def _resize_for_analysis(img, max_dim=ANALYSIS_MAX_DIM):
-    """Resize image for faster analysis without losing forensic quality."""
+    """Resize image for analysis while preserving forensic signatures."""
     h, w = img.shape[:2]
     if max(h, w) <= max_dim:
         return img
     scale = max_dim / max(h, w)
+    # Using INTER_LANCZOS4 for superior anti-aliasing in high-resolution downsampling
     return cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_LANCZOS4)
 
 
@@ -105,14 +106,23 @@ def analyze_image(file_path, eval_id):
             results.append(_error_result(name, str(e)))
 
     # Metadata uses file path
+    meta_result = None
     try:
-        meta_res = metadata.analyze(file_path)
-        meta_res['name'] = 'metadata'
-        results.append(meta_res)
+        meta_result = metadata.analyze(file_path)
+        meta_result['name'] = 'metadata'
+        results.append(meta_result)
     except Exception as e:
         results.append(_error_result('metadata', str(e)))
 
-    final_score = _compute_final_score(results, image_np.shape[1], image_np.shape[0])
+    # Enhanced sensor detection (Webcam calibration)
+    sensor_score = forensic_utils.detect_low_end_sensor(image_np, meta_result.get('details') if meta_result else None)
+    if sensor_score > 0.5:
+        # Add finding to a dummy module or metadata if exists
+        target = meta_result if meta_result else results[0]
+        if 'findings' not in target['details']: target['details']['findings'] = []
+        target['details']['findings'].append({'key': 'finding_meta_webcam'})
+
+    final_score = _compute_final_score(results, image_np.shape[1], image_np.shape[0], sensor_score)
     verdict = _generate_verdict(final_score, results)
 
     return {
@@ -522,7 +532,7 @@ def _temporal_findings(frame_scores, early_detected):
     return findings
 
 
-def _compute_final_score(results, width=None, height=None):
+def _compute_final_score(results, width=None, height=None, sensor_score=0.0):
     """Weighted average of module scores with DL-boosted consensus and resolution awareness."""
     
     # Low-res compression compensation (social media filter)
@@ -604,11 +614,23 @@ def _compute_final_score(results, width=None, height=None):
             dl_weight = 0.45
             legacy_weight = 0.55
             
-        raw_final = (dl_score * dl_weight) + (legacy_avg * legacy_weight)
+        final_score = (dl_score * dl_weight) + (legacy_avg * legacy_weight)
     else:
-        raw_final = legacy_avg
-
-    final_score = raw_final
+        final_score = legacy_avg
+    
+    # Global Webcam & Sensor Quality Mitigation
+    # If a low-end sensor (Webcam) is detected, we must aggressively mitigate false positives
+    # caused by 'flattened' opticts or sensor grain that confuses the neural classifier.
+    if sensor_score > 0.5:
+        if final_score > 30:
+            # If confirmed as hardware webcam, we trust the lack of AI-metadata more than the noise
+            final_score *= 0.45 # 55% discount for webcam noise/grain misclassification
+            
+        # Ensure the verdict findings mention the mitigation
+        for r in results:
+            if 'details' in r and 'findings' in r['details']:
+                if any(f.get('key') == 'finding_meta_webcam' for f in r['details']['findings']):
+                    r['details']['findings'].append({'key': 'finding_compression_mitigated'})
         
     return min(100, max(0, final_score))
 

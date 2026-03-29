@@ -106,6 +106,8 @@ TRANSLATIONS = {
         'invalid_url': 'URL inválida ou não suportada',
         'evaluation_not_found': 'Avaliação não encontrada',
         'error_during_analysis': 'Erro durante análise',
+        'finding_meta_webcam': 'Hardware de baixa fidelidade detectado (Webcam/Câmera USB) — este tipo de sensor naturalmente produz padrões de ruído que podem assemelhar-se a artefatos de IA. Sensibilidade ajustada para evitar falso positivo',
+        'finding_low_res': 'Resolução padrão de sensor de entrada detectada — indicativo de webcam ou câmera frontal de dispositivo móvel',
         # Findings keys
         'finding_freq_incompatible': 'Espectro de frequência incompatível com imagem natural (β={beta}). Modelos generativos como Stable Diffusion e DALL-E produzem espectros com decaimento anômalo, diferente do padrão 1/f² de câmeras reais',
         'finding_freq_periodic_peaks': 'Detectados {count} picos periódicos no espectro de Fourier — assinatura característica de redes neurais com camadas de upsampling (GAN/Diffusion), que criam artefatos de grade invisíveis ao olho humano',
@@ -279,6 +281,8 @@ TRANSLATIONS = {
         'invalid_url': 'Invalid or unsupported URL',
         'evaluation_not_found': 'Evaluation not found',
         'error_during_analysis': 'Error during analysis',
+        'finding_meta_webcam': 'Low-fidelity hardware detected (Webcam/USB Camera) — this type of sensor naturally produces noise patterns that can resemble AI artifacts. Sensitivity adjusted to prevent false positives',
+        'finding_low_res': 'Standard entry-level sensor resolution detected — indicative of a webcam or front-facing mobile camera',
         # Findings keys
         'finding_freq_incompatible': 'Frequency spectrum incompatible with natural image (β={beta}). Generative models like Stable Diffusion and DALL-E produce spectra with anomalous decay, different from the 1/f² pattern of real cameras',
         'finding_freq_periodic_peaks': 'Detected {count} periodic peaks in the Fourier spectrum — characteristic signature of neural networks with upsampling layers (GAN/Diffusion), creating grid artifacts invisible to the human eye',
@@ -452,6 +456,8 @@ TRANSLATIONS = {
         'invalid_url': 'URL no válida o no compatible',
         'evaluation_not_found': 'Evaluación no encontrada',
         'error_during_analysis': 'Error durante el análisis',
+        'finding_meta_webcam': 'Hardware de baja fidelidad detectado (Webcam/Cámara USB) — este tipo de sensor produce naturalmente patrones de ruido que pueden parecerse a artefactos de IA. Sensibilidad ajustada para evitar falsos positivos',
+        'finding_low_res': 'Resolución estándar de sensor de entrada detectada — indicativo de webcam o cámara frontal de dispositivo móvil',
         # Findings keys
         'finding_freq_incompatible': 'Espectro de frecuencia incompatible con imagen natural (β={beta}). Los modelos generativos como Stable Diffusion y DALL-E producen espectros con un decaimiento anómalo, diferente del patrón 1/f² de las cámaras reales',
         'finding_freq_periodic_peaks': 'Detectados {count} picos periódicos en el espectro de Fourier: firma característica de las redes neuronales con capas de upsampling (GAN/difusión), que crean artefactos de rejilla invisibles al ojo humano',
@@ -625,6 +631,8 @@ TRANSLATIONS = {
         'invalid_url': 'URL invalide ou non prise en charge',
         'evaluation_not_found': 'Évaluation non trouvée',
         'error_during_analysis': 'Erreur lors de l\'analyse',
+        'finding_meta_webcam': 'Matériel basse fidélité détecté (Webcam/Caméra USB) — ce type de capteur produit naturellement des motifs de bruit qui peuvent ressembler à des artefacts d\'IA. Sensibilité ajustée pour éviter les faux positifs',
+        'finding_low_res': 'Résolution de capteur d\'entrée standard détectée — indicateur d\'une webcam ou d\'une caméra frontale mobile',
         # Findings keys
         'finding_freq_incompatible': 'Spectre de fréquence incompatible avec une image naturelle (β={beta}). Les modèles génératifs comme Stable Diffusion et DALL-E produisent des spectres avec une décroissance anormale, différente du motif 1/f² des caméras réelles',
         'finding_freq_periodic_peaks': 'Détection de {count} pics périodiques dans le spectre de Fourier — signature caractéristique des réseaux de neurones avec couches de suréchantillonnage (GAN/Diffusion), créant des artefacts de grille invisibles à l\'œil humain',
@@ -798,6 +806,8 @@ TRANSLATIONS = {
         'invalid_url': 'Ungültige oder nicht unterstützte URL',
         'evaluation_not_found': 'Bewertung nicht gefunden',
         'error_during_analysis': 'Fehler bei der Analyse',
+        'finding_meta_webcam': 'Low-Fidelity-Hardware erkannt (Webcam/USB-Kamera) — dieser Sensortyp erzeugt von Natur aus Rauschmuster, die KI-Artefakten ähneln können. Empfindlichkeit angepasst, um Fehlalarme zu vermeiden',
+        'finding_low_res': 'Standard-Einstiegssensor-Auflösung erkannt — Hinweis auf eine Webcam oder Frontkamera eines Mobilgeräts',
         # Findings keys
         'finding_freq_incompatible': 'Frequenzspektrum nicht kompatibel mit natürlichem Bild (β={beta}). Generative Modelle wie Stable Diffusion und DALL-E erzeugen Spektren mit anomalem Abfall, der vom 1/f²-Muster echter Kameras abweicht',
         'finding_freq_periodic_peaks': '{count} periodische Spitzen im Fourier-Spektrum erkannt — charakteristische Signatur von neuronalen Netzen mit Upsampling-Layers (GAN/Diffusion), die für das menschliche Auge unsichtbare Gitterartefakte erzeugen',
