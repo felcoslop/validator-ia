@@ -739,8 +739,6 @@ body {
     flex-shrink: 0;
 }
 
-.score-pill {
-
 .mc-title {
     display: flex;
     align-items: center;

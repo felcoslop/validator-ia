@@ -2,6 +2,7 @@ let html5QrCode = null;
 
 async function openScanner() {
     const modal = document.getElementById('scanner-modal');
+    modal.classList.remove('hidden');
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
 
@@ -70,6 +71,7 @@ function closeScanner() {
         });
     } else {
         document.getElementById('scanner-modal').classList.remove('active');
+        document.getElementById('scanner-modal').classList.add('hidden');
         document.body.style.overflow = '';
     }
 }
