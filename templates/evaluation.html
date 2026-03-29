@@ -164,9 +164,9 @@
                         </div>
                         <div style="font-size: 11px;">
                             <div style="color: var(--text-ghost); font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">{{ _('forensic_signatures') }}</div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>{{ _('hardware_software') }}:</span><span style="font-weight: 700;">{{ mod.details.sensor_type or 'Standard' }}</span></div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>{{ _('ai_marker') }}:</span><span style="font-weight: 700; color: {% if mod.details.ai_marker %}var(--red){% else %}var(--green){% endif %};">{{ mod.details.ai_marker or _('absent') }}</span></div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>C2PA/Credentials:</span><span style="font-weight: 700;">{% if mod.details.c2pa_present %}{{ _('present') }}{% else %}{{ _('absent') }}{% endif %}</span></div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;"><span>{{ _('gps_data') }}:</span><span style="font-weight: 700;">{% if mod.details.gps_present %}{{ _('present') }}{% else %}{{ _('absent') }}{% endif %}</span></div>
                         </div>
                     </div>
                     {% elif mod.visualization %}
@@ -181,11 +181,11 @@
                     <div style="padding: 16px;">
                         {% for f in mod.details.findings %}
                         <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px; padding-left: 12px; border-left: 2px solid var(--border);">
-                            {% if f is mapping %}{{ _(f) }}{% else %}{{ f }}{% endif %}
+                            {{ _(f) if f is mapping else f }}
                         </div>
                         {% endfor %}
                         <div style="height: 4px; background: var(--bg); border-radius: 2px; margin-top: 12px; overflow: hidden;">
-                            <div style="height: 100%; width: {{ mod.score }}%; background: {% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}var(--accent-blue){% endif %};"></div>
+                            <div style="height: 100%; width: {{ mod.score }}%; background: {{ 'var(--red)' if mod.score > 55 else 'var(--amber)' if mod.score > 30 else 'var(--accent-blue)' }};"></div>
                         </div>
                     </div>
                 </div>
