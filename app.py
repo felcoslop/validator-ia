@@ -155,6 +155,24 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/metodologia')
+def metodologia():
+    """SEO & Institutional Page: Forensic Methodology."""
+    return render_template('metodologia.html')
+
+
+@app.route('/detector-de-deepfake')
+def seo_deepfake():
+    """SEO Landing Page: Deepfake Detector."""
+    return render_template('seo_deepfake.html')
+
+
+@app.route('/pericia-digital')
+def seo_pericia():
+    """SEO Landing Page: Digital Forensics."""
+    return render_template('seo_pericia.html')
+
+
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
     """Upload and analyze or analyze previously uploaded video with selected frames."""

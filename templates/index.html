@@ -161,8 +161,13 @@
     </main>
 
     <footer class="footer">
-        <div class="container">
-            © 2026 ForensicAI • {{ _('footer_text') }}
+        <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <div class="footer-links" style="display: flex; gap: 24px; font-size: 11px;">
+                <a href="/metodologia" style="color: var(--text-muted); text-decoration: none;">Metodologia Forense</a>
+                <a href="/detector-de-deepfake" style="color: var(--text-muted); text-decoration: none;">Detector de Deepfake</a>
+                <a href="/pericia-digital" style="color: var(--text-muted); text-decoration: none;">Perícia Digital AI</a>
+            </div>
+            <div>© 2026 ForensicAI • {{ _('footer_text') }}</div>
         </div>
     </footer>
 

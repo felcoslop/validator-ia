@@ -769,12 +769,15 @@ body {
 
 /* Modal */
 .modal-overlay {
-    position: fixed;
-    inset: 0;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     background: rgba(15, 23, 42, 0.7);
     backdrop-filter: blur(8px);
-    z-index: 1000;
-    display: none;
+    z-index: 9999 !important;
+    display: none !important;
     align-items: center;
     justify-content: center;
     padding: 24px;
@@ -783,7 +786,7 @@ body {
 }
 
 .modal-overlay.active {
-    display: flex;
+    display: flex !important;
     opacity: 1;
 }
 

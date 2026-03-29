@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Deepfake e Vídeos Falsos | ForensicAI</title>
+    <meta name="description" content="Descubra se um vídeo ou áudio é um deepfake criado por Inteligência Artificial. Nossa ferramenta realiza perícia digital instantânea usando algoritmos avançados.">
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://app.forensicai.com/detector-de-deepfake">
+    <meta property="og:title" content="Detector Inteligente de Deepfakes | ForensicAI">
+    <meta property="og:description" content="Proteja-se contra fraudes e desinformação. Detecte vídeos manipulados em segundos com tecnologia de nível forense.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/img/favicon.png">
+    <link rel="stylesheet" href="/static/css/style.css">
+    
+    <style>
+        .hero {
+            padding: 80px 20px 60px;
+            text-align: center;
+            background: var(--bg);
+        }
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 32px;
+            line-height: 1.6;
+        }
+        .cta-button {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: white;
+            padding: 16px 36px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: var(--shadow-md);
+            transition: var(--tr);
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: #1d4ed8;
+        }
+        .features {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .article {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px 80px;
+        }
+        .article h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            margin-top: 40px;
+            color: var(--accent);
+        }
+        .article p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <header class="header">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <div class="logo-icon">F</div>
+                <div>
+                    <div class="logo-title">Forensic<span class="accent">AI</span></div>
+                    <div class="logo-sub">Deepfake Detector</div>
+                </div>
+            </a>
+            <div class="header-right">
+                <a href="/" class="btn-validate-link">Proteger-me Agora</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="container">
+            <h1>O software mais rápido para analisar Deepfakes e vídeos manipulados</h1>
+            <p>Fraudes usando vídeos gerados por IA estão crescendo. Nossa tecnologia realiza uma engenharia reversa para identificar com precisão militar se um vídeo é real ou um <em>Deepfake</em>.</p>
+            <a href="/" class="cta-button">Testar um Vídeo (Grátis)</a>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <h3>Extração Temporal de Frames</h3>
+            <p>Seja no YouTube, TikTok ou WhatsApp, nosso sistema quebra o vídeo quadro a quadro para detectar micro-expressões que modelos de linguagem visual (VLM) não conseguem manter consistentes.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Detecta Voice Swaps (Clonagem Múltipla)</h3>
+            <p>Muitas deepfakes hoje utilizam áudios sincronizados labialmente. O motor identifica desalinhamentos entre movimento labial e ruído de fundo (PRNU Noise).</p>
+        </div>
+        <div class="feature-card">
+            <h3>Relatório com Valor Pericial</h3>
+            <p>Ao finalizar a detecção, geramos um laudo com assinatura Hash e QR Code imutável. Essencial para denúncias de vazamento de conteúdo íntimo (revenge porn) e fraudes bancárias.</p>
+        </div>
+    </div>
+
+    <main class="article">
+        <h2>Como saber se um vídeo é Deepfake?</h2>
+        <p>A inteligência artificial evoluiu a um ponto em que o olho humano não é mais suficiente para identificar o que é real. Aplicativos como FaceSwap, Wav2Lip, Sora e MidJourney conseguem criar cenários sintéticos ou colocar o rosto de uma pessoa no corpo de outra em questão de minutos.</p>
+        
+        <p>Nossa plataforma age como uma contra-medida corporativa. Diferente de "achismos" visuais, os algoritmos do <strong>ForensicAI</strong> buscam rastros matemáticos (artefatos de compressão, ruído fantasma e difusão de gradiente) que a inteligência artificial deixa ao montar os pixels na tela.</p>
+        
+        <h2>Por que empresas e advogados confiam na nossa precisão?</h2>
+        <p>Ao invés de dependermos apenas de uma única rede neural (o que geraria respostas imprecisas com a chegada de novos modelos de IA), estabelecemos um protocolo híbrido. Se você está sendo vítima de extorsão ou difamação usando conteúdos digitais adulterados, nosso <i>score de probabilidade sintética</i> garante evidências cristalinas para processos de remoção nas plataformas online.</p>
+
+        <div style="text-align: center; margin-top: 60px;">
+            <a href="/metodologia" style="color: var(--accent-blue); text-decoration: none; font-weight: 600;">❯ Veja nossa arquitetura matemática completa</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+            <div class="footer-links" style="display: flex; gap: 24px; font-size: 11px;">
+                <a href="/metodologia" style="color: var(--text-muted); text-decoration: none;">Metodologia Forense</a>
+                <a href="/detector-de-deepfake" style="color: var(--text-muted); text-decoration: none;">Detector de Deepfake</a>
+                <a href="/pericia-digital" style="color: var(--text-muted); text-decoration: none;">Perícia Digital AI</a>
+            </div>
+            <div>© 2026 ForensicAI • Software Anti-Manipulação de Mídia</div>
+        </div>
+    </footer>
+</body>
+</html>
