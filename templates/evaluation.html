@@ -287,7 +287,7 @@
     </main>
 
     <!-- Modal for Visualization -->
-    <div id="image-modal" class="modal-overlay" onclick="closeModal()">
+    <div id="image-modal" class="modal-overlay hidden" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-close" onclick="closeModal()" style="color: #000; background: #fff; border-radius: 50%; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                 <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
@@ -297,7 +297,7 @@
     </div>
 
     <!-- QR Code Modal -->
-    <div id="qr-modal" class="modal-overlay" onclick="closeQRModal()">
+    <div id="qr-modal" class="modal-overlay hidden" onclick="closeQRModal()">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 32px; text-align: center; max-width: 380px;">
             <div class="modal-close" onclick="closeQRModal()" style="color: #000; background: #fff; border-radius: 50%; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                 <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
@@ -311,7 +311,7 @@
     </div>
 
     <!-- Scanner Modal -->
-    <div id="scanner-modal" class="modal-overlay" onclick="closeScanner()">
+    <div id="scanner-modal" class="modal-overlay hidden" onclick="closeScanner()">
         <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 450px;">
             <div class="modal-close" onclick="closeScanner()">
                 <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
@@ -337,19 +337,27 @@
     <script>
         function openModal(src) {
             document.getElementById('modal-img').src = src;
-            document.getElementById('image-modal').classList.add('active');
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
         function closeModal() {
-            document.getElementById('image-modal').classList.remove('active');
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('active');
+            modal.classList.add('hidden');
             document.body.style.overflow = '';
         }
         function openQRModal() {
-            document.getElementById('qr-modal').classList.add('active');
+            const modal = document.getElementById('qr-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
         function closeQRModal() {
-            document.getElementById('qr-modal').classList.remove('active');
+            const modal = document.getElementById('qr-modal');
+            modal.classList.remove('active');
+            modal.classList.add('hidden');
             document.body.style.overflow = '';
         }
         document.addEventListener('keydown', (e) => {
