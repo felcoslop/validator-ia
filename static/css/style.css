@@ -851,7 +851,7 @@ body {
 }
 
 /* === AD MODAL & MARKETING === */
-.ad-modal {
+#ad-modal {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -865,7 +865,7 @@ body {
     backdrop-filter: blur(12px);
 }
 
-.ad-modal.active {
+#ad-modal.active {
     display: flex !important;
     animation: adFadeIn 0.3s ease;
 }

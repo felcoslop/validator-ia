@@ -110,6 +110,7 @@
         const statusEl = document.getElementById('ad-status-text');
         const closeBtn = document.getElementById('close-ad-btn');
 
+        adModal.classList.remove('hidden');
         adModal.classList.add('active');
         let count = 10;
         const messages = [
@@ -133,6 +134,7 @@
                 closeBtn.innerHTML = "Ver Resultados Forenses";
                 closeBtn.onclick = () => {
                     adModal.classList.remove('active');
+                    adModal.classList.add('hidden');
                     startAnalysis();
                 };
             }
