@@ -9,9 +9,10 @@ import base64
 from . import utils
 
 
-def analyze(image_np):
+def analyze(image_np, mode='image'):
     """
     Perform statistical analysis on pixel distributions.
+    mode: 'image' for photos, 'video' for video frames (different thresholds).
     Returns score (0-100), details, and visualization.
     """
     gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY)
@@ -34,51 +35,87 @@ def analyze(image_np):
     # 6. JPEG ghost detection
     jpeg_score = _jpeg_ghost(image_np)
 
-    # Score — tuned for modern diffusion model detection
+    # Score — differentiated by media type
     score = 0
 
-    # Entropy (natural images typically 6.5-7.5)
-    if entropy < 5.0 or entropy > 7.8:
-        score += 20
-    elif entropy < 5.5 or entropy > 7.5:
-        score += 12
-    elif entropy < 6.0:
-        score += 5
-
-    # Histogram anomalies
-    score += min(20, int(hist_anomaly * 25))
-
-    # Benford's Law violation
-    # IMPORTANT: Well-exposed DSLR photos naturally have benford scores of 0.7-1.0
-    # because their pixel distributions follow predictable patterns from proper exposure.
-    # Only extreme violations (>1.2) or very high scores with other evidence are suspicious.
-    if benford_score > 1.5:
-        score += 30
-    elif benford_score > 1.2:
-        score += 20
-    elif benford_score > 0.8:
-        score += 8  # Mild deviation, common in compressed photos
-    # Note: 0.7-1.0 is NORMAL for well-exposed photos, minimal/no penalty
-
-    # Adjacency correlation (AI diffusion models: very high correlation from smoothing)
-    # IMPORTANT: Sharp DSLR photos naturally have adj_corr ~0.99 due to well-exposed smooth gradients.
-    # Only EXTREME correlation (>0.995) indicates AI-level over-smoothing.
-    if adj_corr > 0.999:
-        score += 30  # Extremely high (strong AI signal)
-    elif adj_corr > 0.997:
-        score += 22
-    elif adj_corr > 0.995:
-        score += 15
-    elif adj_corr > 0.993:
-        score += 8
-    elif adj_corr < 0.9:
-        score += 3
-
-    # LSB analysis
-    score += min(15, int(lsb_score * 18))
-
-    # JPEG ghost
-    score += min(10, int(jpeg_score * 10))
+    if mode == 'video':
+        # VIDEO MODE: Video codecs compress differently than JPEG.
+        # Video frames: lower entropy (~5.5-7.0), higher adjacency (~0.995+),
+        # different Benford distributions from temporal quantization.
+        
+        # Entropy (video frames typically 5.5-7.0)
+        if entropy < 4.5 or entropy > 7.5:
+            score += 25
+        elif entropy < 5.0 or entropy > 7.2:
+            score += 12
+        
+        # Histogram anomalies
+        score += min(20, int(hist_anomaly * 30))
+        
+        # Benford's Law — video quantization shifts digits.
+        # AI video often shows suspiciously strong Benford compliance (simulated naturalness).
+        if benford_score > 1.0:
+            score += 25
+        elif benford_score > 0.6:
+            score += 15
+        elif benford_score > 0.4:
+            score += 8
+        
+        # Adjacency correlation — video frames naturally higher (~0.990-0.997)
+        # AI often goes even higher due to temporal smoothing.
+        if adj_corr > 0.999:
+            score += 35
+        elif adj_corr > 0.997:
+            score += 25
+        elif adj_corr > 0.995:
+            score += 15
+        elif adj_corr > 0.990:
+            score += 8
+        
+        # LSB analysis
+        score += min(20, int(lsb_score * 25))
+        
+        # JPEG ghost (less relevant for video bytes but can detect spliced frames)
+        score += min(10, int(jpeg_score * 12))
+    else:
+        # IMAGE MODE: DSLR/phone photos
+        # Entropy (natural images typically 6.5-7.5)
+        if entropy < 5.0 or entropy > 7.8:
+            score += 20
+        elif entropy < 5.5 or entropy > 7.5:
+            score += 12
+        elif entropy < 6.0:
+            score += 5
+        
+        # Histogram anomalies
+        score += min(20, int(hist_anomaly * 25))
+        
+        # Benford's Law violation
+        # Well-exposed DSLR: 0.7-1.0 is NORMAL
+        if benford_score > 1.5:
+            score += 30
+        elif benford_score > 1.2:
+            score += 20
+        elif benford_score > 0.8:
+            score += 8
+        
+        # Adjacency correlation — DSLR: ~0.991 is normal
+        if adj_corr > 0.999:
+            score += 30
+        elif adj_corr > 0.997:
+            score += 22
+        elif adj_corr > 0.995:
+            score += 15
+        elif adj_corr > 0.993:
+            score += 8
+        elif adj_corr < 0.9:
+            score += 3
+        
+        # LSB analysis
+        score += min(15, int(lsb_score * 18))
+        
+        # JPEG ghost
+        score += min(10, int(jpeg_score * 10))
 
     score = min(100, max(0, score))
 

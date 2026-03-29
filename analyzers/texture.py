@@ -13,9 +13,10 @@ import cv2
 import base64
 
 
-def analyze(image_np):
+def analyze(image_np, mode='image'):
     """
     Detect AI texture artifacts in photographic content.
+    mode: 'image' for photos, 'video' for video frames.
     Focuses on skin smoothness, micro-texture absence, and color anomalies.
     """
     gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY).astype(np.float64)

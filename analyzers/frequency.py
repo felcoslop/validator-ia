@@ -13,9 +13,10 @@ from PIL import Image
 from . import utils
 
 
-def analyze(image_np):
+def analyze(image_np, mode='image'):
     """
-    Perform FFT-based frequency analysis on an image.
+    Perform FFT-based frequency analysis on an image or video frame.
+    mode: 'image' for photos, 'video' for video frames (different thresholds).
     Returns score (0-100, higher = more likely AI), details dict, and visualization.
     """
     gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY).astype(np.float32)
@@ -63,47 +64,83 @@ def analyze(image_np):
     # 5. Spectral flatness (synthetic images tend to have flatter spectra in HF)
     spectral_flatness = _spectral_flatness(radial_profile)
 
-    # Score calculation
+    # Score calculation — differentiated by media type
     score = 0
 
-    # Beta deviation from natural range (1.5-3.0 typical for uncompressed natural images)
-    # IMPORTANT: JPEG-compressed DSLR photos typically have beta ~1.2-1.5 due to quantization.
-    # Only extreme deviations (<1.0 or >4.5) are strong AI indicators.
-    if beta < 1.0 or beta > 4.5:
-        score += 30
-    elif beta < 1.2 or beta > 3.5:
-        score += 15
-    elif beta > 3.0:
-        score += 5
-    # Note: beta 1.2-1.5 is NORMAL for compressed photos, no penalty
-
-    # Fit quality (higher residual variance = more anomalous)
-    if fit_quality > 1.5:
-        score += 20
-    elif fit_quality > 0.8:
-        score += 10
-
-    # Periodic peaks
-    score += min(30, peak_score * 10)
-
-    # High frequency anomaly
-    # Real DSLR photos after JPEG compression: hf_ratio ~0.002-0.005 (normal)
-    # AI-generated after social media re-encoding: hf_ratio ~0.001 (suspiciously dead)
-    if hf_ratio > 0.15:
-        score += 25  # Anomalously high HF (upsampling artifacts)
-    elif hf_ratio < 0.001:
-        score += 25  # Extremely dead HF (heavy diffusion smoothing)
-    elif hf_ratio < 0.002:
-        score += 18  # Very low HF — AI range
-    elif hf_ratio < 0.005:
-        score += 8   # Mild-moderate HF loss (JPEG compression)
-
-    # Spectral flatness
-    # Real photos: ~0.97, AI: ~0.87
-    if spectral_flatness > 0.95:
-        score += 10  # Extremely flat (encoded DSLR with heavy compression)
-    elif spectral_flatness > 0.85:
-        score += 5   # Moderate flatness
+    if mode == 'video':
+        # VIDEO MODE: Video codecs (H.264/H.265) inherently compress HF and shift beta.
+        # Normal video frame: beta ~0.8-1.5
+        # AI-generated video frame: beta ~1.5-2.5 (often too "clean" for video) or <0.5
+        
+        # Beta — video codec naturally compresses to ~1.0. AI often remains high/clean.
+        if beta < 0.5 or beta > 3.0:
+            score += 35  # Extreme deviation
+        elif beta > 1.8:
+            score += 20  # Too clean for heavily compressed video
+        elif beta > 1.4:
+            score += 10  # Suspiciously steady
+        elif beta < 0.7:
+            score += 15
+        
+        # Fit quality
+        if fit_quality > 0.8:
+            score += 15
+        elif fit_quality > 0.4:
+            score += 8
+        
+        # Periodic peaks
+        score += min(30, peak_score * 12)
+        
+        # HF ratio — video frames naturally have less HF, but AI is DEAD.
+        if hf_ratio > 0.08:
+            score += 25  # Anomalously high (upsampling)
+        elif hf_ratio < 0.0005:
+            score += 30  # Deadbands (AI diffusion)
+        elif hf_ratio < 0.0015:
+            score += 18  # Very low
+        elif hf_ratio < 0.003:
+            score += 8   # Mildly low
+        
+        # Spectral flatness — AI video frames are often flatter than natural ones.
+        if spectral_flatness > 0.95:
+            score += 15
+        elif spectral_flatness > 0.85:
+            score += 8
+    else:
+        # IMAGE MODE: DSLR/phone photos with JPEG compression
+        # Beta deviation from natural range (1.5-3.0 typical for uncompressed)
+        # JPEG-compressed DSLR: beta ~1.2-1.5
+        if beta < 1.0 or beta > 4.5:
+            score += 30
+        elif beta < 1.2 or beta > 3.5:
+            score += 15
+        elif beta > 3.0:
+            score += 5
+        
+        # Fit quality
+        if fit_quality > 1.5:
+            score += 20
+        elif fit_quality > 0.8:
+            score += 10
+        
+        # Periodic peaks
+        score += min(30, peak_score * 10)
+        
+        # HF ratio — DSLR after JPEG: ~0.002-0.005
+        if hf_ratio > 0.15:
+            score += 25
+        elif hf_ratio < 0.001:
+            score += 25
+        elif hf_ratio < 0.002:
+            score += 18
+        elif hf_ratio < 0.005:
+            score += 8
+        
+        # Spectral flatness
+        if spectral_flatness > 0.95:
+            score += 10
+        elif spectral_flatness > 0.85:
+            score += 5
 
     score = min(100, max(0, score))
 

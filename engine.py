@@ -255,7 +255,11 @@ def analyze_video(file_path, eval_id, selected_indices=None):
             ]
             for name, mod in heuristic_modules:
                 try:
-                    res = mod.analyze(mid_resized)
+                    # Pass mode='video' to analyzers that support it
+                    if name in ['frequency', 'statistical', 'gradient', 'texture', 'noise']:
+                        res = mod.analyze(mid_resized, mode='video')
+                    else:
+                        res = mod.analyze(mid_resized)
                     res['name'] = name  # Force key
                     full_module_results.append(res)
                 except Exception as e:
@@ -446,17 +450,17 @@ def _extract_frames(cap, indices):
 
 
 def _quick_frame_analysis(frame):
-    """Quick per-frame score using lightweight analyzers."""
+    """Quick per-frame score using lightweight analyzers (video mode)."""
     score_sum = 0
     count = 0
     try:
-        r = frequency.analyze(frame)
+        r = frequency.analyze(frame, mode='video')
         score_sum += r['score']
         count += 1
     except Exception:
         pass
     try:
-        r = statistical.analyze(frame)
+        r = statistical.analyze(frame, mode='video')
         score_sum += r['score']
         count += 1
     except Exception:
@@ -611,16 +615,16 @@ def _compute_final_score_video(results, width=None, height=None):
         is_low_res = True
         
     video_weights = {
-        'dl_classifier': 0.35,
+        'dl_classifier': 0.30,
         'ai_texture': 0.08,
-        'frequency': 0.05,
+        'frequency': 0.12,    # Increased for better detection
         'noise': 0.05,
         'ela': 0.05,
-        'gradient': 0.04,
-        'statistical': 0.04,
+        'gradient': 0.08,     # Increased for video edge spread
+        'statistical': 0.10,   # Increased for Benford/Adjacency
         'wavelet': 0.05,
-        'hv_score': 0.04,
-        'temporal': 0.25,
+        'hv_score': 0.02,
+        'temporal': 0.15,     # Reduced slightly as per-frame is now more robust
     }
     total_weight = 0
     weighted_sum = 0
@@ -631,12 +635,11 @@ def _compute_final_score_video(results, width=None, height=None):
         name = r.get('name', '')
         score = r.get('score', 50)
 
-        # Lighten compression-prone heuristics on low-res video instead of cutting them by 50%.
+        # Lighten compression-prone heuristics on low-res video.
         if is_low_res and name in ['frequency', 'noise', 'hv_score', 'wavelet']:
-            # Max cap it softly so it doesn't cross 75 unless extreme, but don't blindly halve it.
-            if score > 40:
-                score = 40 + (score - 40) * 0.6
-                r['score'] = score
+            # More gentle dampening (0.85x) instead of aggressive clipping.
+            score = score * 0.85
+            r['score'] = score
             
         w = video_weights.get(name, 0.05)
         weighted_sum += score * w

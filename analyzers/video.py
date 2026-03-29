@@ -77,8 +77,9 @@ def analyze(video_path, frame_analyzers):
 
     frame_scores = []
     for frame in frames[:5]:  # Analyze up to 5 frames
-        freq_result = frequency.analyze(frame)
-        stat_result = statistical.analyze(frame)
+        freq_result = frequency.analyze(frame, mode='video')
+        stat_result = statistical.analyze(frame, mode='video')
+        # Check other modules too if needed, but video.py main loop should be consistent
         avg_score = (freq_result['score'] + stat_result['score']) / 2
         frame_scores.append(avg_score)
 
@@ -110,8 +111,8 @@ def analyze(video_path, frame_analyzers):
     # Optical flow anomaly
     score += min(15, int(flow_score * 15))
 
-    # Per-frame forensics (boosted: individual AI frames inherently score higher)
-    score += min(30, int(mean_frame_score * 0.45))
+    # Per-frame forensics (boosted: individual AI frames inherently score higher in video-mode)
+    score += min(35, int(mean_frame_score * 0.60))
 
     # Frame score variance (inconsistent = suspicious)
     if frame_score_var > 100:

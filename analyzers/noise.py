@@ -11,9 +11,10 @@ from skimage.restoration import denoise_wavelet
 from . import utils
 
 
-def analyze(image_np):
+def analyze(image_np, mode='image'):
     """
     Extract and analyze noise residual patterns.
+    mode: 'image' for photos, 'video' for video frames.
     Returns score (0-100), details, and visualization.
     """
     # Convert to float [0,1]

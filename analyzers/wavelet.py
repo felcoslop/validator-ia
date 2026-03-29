@@ -10,9 +10,10 @@ import pywt
 import base64
 
 
-def analyze(image_np):
+def analyze(image_np, mode='image'):
     """
     Perform wavelet decomposition analysis.
+    mode: 'image' for photos, 'video' for video frames.
     Returns score (0-100), details, and visualization.
     """
     gray = cv2.cvtColor(image_np, cv2.COLOR_BGR2GRAY).astype(np.float64)

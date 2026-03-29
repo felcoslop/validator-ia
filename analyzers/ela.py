@@ -11,7 +11,7 @@ from io import BytesIO
 from PIL import Image
 
 
-def analyze(image_np):
+def analyze(image_np, mode='image'):
     """
     Perform Error Level Analysis.
     Returns score (0-100), details, and ELA visualization.

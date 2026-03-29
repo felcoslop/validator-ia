@@ -11,7 +11,7 @@ import base64
 from . import utils
 
 
-def analyze(image_np):
+def analyze(image_np, mode='image'):
     """
     Compute H/V energy scores from the frequency spectrum.
     Returns score (0-100), details, and visualization.
