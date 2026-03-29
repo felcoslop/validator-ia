@@ -48,17 +48,28 @@ def analyze(image_np):
     # Histogram anomalies
     score += min(20, int(hist_anomaly * 25))
 
-    # Benford's Law violation (stronger weight - key AI indicator)
-    score += min(30, int(benford_score * 35))
+    # Benford's Law violation
+    # IMPORTANT: Well-exposed DSLR photos naturally have benford scores of 0.7-1.0
+    # because their pixel distributions follow predictable patterns from proper exposure.
+    # Only extreme violations (>1.2) or very high scores with other evidence are suspicious.
+    if benford_score > 1.5:
+        score += 30
+    elif benford_score > 1.2:
+        score += 20
+    elif benford_score > 0.8:
+        score += 8  # Mild deviation, common in compressed photos
+    # Note: 0.7-1.0 is NORMAL for well-exposed photos, minimal/no penalty
 
     # Adjacency correlation (AI diffusion models: very high correlation from smoothing)
-    if adj_corr > 0.998:
+    # IMPORTANT: Sharp DSLR photos naturally have adj_corr ~0.99 due to well-exposed smooth gradients.
+    # Only EXTREME correlation (>0.995) indicates AI-level over-smoothing.
+    if adj_corr > 0.999:
         score += 30  # Extremely high (strong AI signal)
-    elif adj_corr > 0.995:
+    elif adj_corr > 0.997:
         score += 22
-    elif adj_corr > 0.99:
+    elif adj_corr > 0.995:
         score += 15
-    elif adj_corr > 0.98:
+    elif adj_corr > 0.993:
         score += 8
     elif adj_corr < 0.9:
         score += 3

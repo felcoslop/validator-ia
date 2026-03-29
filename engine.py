@@ -564,7 +564,8 @@ def _compute_final_score(results, width=None, height=None):
             if r.get('name') not in ['dl_classifier', 'metadata', 'Classificador Neural (DL)', 'Análise de Metadados (EXIF)']:
                 if r.get('score', 0) >= 30:
                     r['score'] = min(int(r['score'] * 0.45), 28)
-                    r['details']['findings'] = [{'key': 'finding_compression_mitigated'}]
+                    # Append the mitigation flag instead of overwriting the native mathematical findings
+                    r['details']['findings'].append({'key': 'finding_compression_mitigated'})
 
     # Re-calculate legacy average upfront for dynamic weighting.
     # We take the top 3 strongest AI signals as the representative physics score.

@@ -48,17 +48,26 @@ def analyze(image_np):
     score = 0
 
     # Gradient coefficient of variation
-    # AI over-smooths (low CV) or generates heavily fragmented/mangled edges (extremely high CV).
+    # AI over-smooths: grad_cv is LOW because AI creates unnaturally uniform gradient strength.
+    # Real photos naturally have HIGH grad_cv (2.0-5.0+) due to:
+    #   - Depth of field (sharp subject, blurry background)
+    #   - Natural texture variation (skin, fabric, foliage)
+    #   - Lighting gradients across the scene
+    # ONLY low CV is a genuine AI indicator.
     if grad_cv < 0.3:
         score += 25  # Very over-smoothed (strong AI signal)
     elif grad_cv < 0.5:
         score += 18
     elif grad_cv < 0.8:
         score += 8
-    elif grad_cv > 2.5:
-        score += 25  # Mangled, extremely sparse fragmented gradients typical of AI generation
-    elif grad_cv > 1.5:
-        score += 15
+
+    # Cross-metric: Mean gradient intensity + CV combination
+    # AI video generates edges EVERYWHERE (high mean ~35+) with moderate CV (1.5-4.0)
+    # Real photos have SPARSE edges (low mean ~15-25) concentrated on subjects with extreme CV (3.5+)
+    if mean_grad > 30 and grad_cv < 4.0:
+        score += 25  # Distributed synthetic edges
+    elif mean_grad > 25 and grad_cv < 3.0:
+        score += 15  # Moderate synthetic spread
 
     # Edge coherence (AI often has overly coherent edges)
     if edge_coherence > 0.6:

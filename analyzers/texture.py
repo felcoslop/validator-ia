@@ -59,18 +59,25 @@ def analyze(image_np):
         score += 5
 
     # Color correlation  
-    if color_score > 0.7:
+    # IMPORTANT: Real photos naturally have high inter-channel correlation (0.8-0.95)
+    # Only EXTREME correlation (>0.97) or VERY uniform spread is an AI indicator
+    if color_score > 0.95:
         score += 20
-    elif color_score > 0.4:
-        score += 12
-    elif color_score > 0.2:
-        score += 5
+    elif color_score > 0.85:
+        score += 5  # Normal for real photos, minimal penalty
+    elif color_score > 0.5:
+        score += 0  # Not suspicious at all
+    elif color_score < 0.3:
+        score += 10  # Abnormally LOW correlation can indicate AI too (broken channels)
 
-    # LBP uniformity
-    if lbp_score > 0.6:
-        score += 15
-    elif lbp_score > 0.3:
-        score += 8
+    # LBP uniformity (stronger curve — AI at 0.5 should score notably more than real at 0.25)
+    if lbp_score > 0.7:
+        score += 20
+    elif lbp_score > 0.5:
+        score += 12  # Catches AI-level uniformity
+    elif lbp_score > 0.35:
+        score += 5
+    # < 0.35 = natural diversity, no penalty
 
     # DCT analysis  
     score += min(10, int(dct_score * 15))

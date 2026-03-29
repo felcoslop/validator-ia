@@ -66,13 +66,16 @@ def analyze(image_np):
     # Score calculation
     score = 0
 
-    # Beta deviation from natural range (1.5-3.0 typical for natural images)
+    # Beta deviation from natural range (1.5-3.0 typical for uncompressed natural images)
+    # IMPORTANT: JPEG-compressed DSLR photos typically have beta ~1.2-1.5 due to quantization.
+    # Only extreme deviations (<1.0 or >4.5) are strong AI indicators.
     if beta < 1.0 or beta > 4.5:
-        score += 35
+        score += 30
     elif beta < 1.2 or beta > 3.5:
-        score += 25
-    elif beta < 1.5 or beta > 3.0:
-        score += 10
+        score += 15
+    elif beta > 3.0:
+        score += 5
+    # Note: beta 1.2-1.5 is NORMAL for compressed photos, no penalty
 
     # Fit quality (higher residual variance = more anomalous)
     if fit_quality > 1.5:
@@ -84,16 +87,23 @@ def analyze(image_np):
     score += min(30, peak_score * 10)
 
     # High frequency anomaly
+    # Real DSLR photos after JPEG compression: hf_ratio ~0.002-0.005 (normal)
+    # AI-generated after social media re-encoding: hf_ratio ~0.001 (suspiciously dead)
     if hf_ratio > 0.15:
-        score += 25
-    elif hf_ratio < 0.005:
+        score += 25  # Anomalously high HF (upsampling artifacts)
+    elif hf_ratio < 0.001:
         score += 25  # Extremely dead HF (heavy diffusion smoothing)
-    elif hf_ratio < 0.01:
-        score += 15  # Suspiciously low HF content
+    elif hf_ratio < 0.002:
+        score += 18  # Very low HF — AI range
+    elif hf_ratio < 0.005:
+        score += 8   # Mild-moderate HF loss (JPEG compression)
 
     # Spectral flatness
-    if spectral_flatness > 0.6:
-        score += 10
+    # Real photos: ~0.97, AI: ~0.87
+    if spectral_flatness > 0.95:
+        score += 10  # Extremely flat (encoded DSLR with heavy compression)
+    elif spectral_flatness > 0.85:
+        score += 5   # Moderate flatness
 
     score = min(100, max(0, score))
 

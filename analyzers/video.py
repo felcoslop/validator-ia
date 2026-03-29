@@ -93,21 +93,25 @@ def analyze(video_path, frame_analyzers):
 
     # Temporal noise inconsistency
     if noise_consistency > 0.5:
-        score += 20
+        score += 25
     elif noise_consistency > 0.2:
-        score += 10
+        score += 15
+    elif noise_consistency > 0.1:
+        score += 8
 
     # Spectral instability
     if spectral_stability > 0.5:
-        score += 20
+        score += 25
     elif spectral_stability > 0.2:
-        score += 10
+        score += 15
+    elif spectral_stability > 0.1:
+        score += 8
 
     # Optical flow anomaly
     score += min(15, int(flow_score * 15))
 
-    # Per-frame forensics
-    score += min(25, int(mean_frame_score * 0.25))
+    # Per-frame forensics (boosted: individual AI frames inherently score higher)
+    score += min(30, int(mean_frame_score * 0.45))
 
     # Frame score variance (inconsistent = suspicious)
     if frame_score_var > 100:
