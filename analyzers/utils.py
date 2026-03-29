@@ -94,10 +94,20 @@ def detect_low_end_sensor(img_np, metadata_dict=None):
         if any(kw in make or kw in model or kw in software for kw in webcam_keywords):
             score += 0.8
             
-    # 2. Resolution check (webcams are often exactly 720p, 1080p, or 480p)
+    # 2. Resolution check (webcams are often exactly standard sensor sizes)
     h, w = img_np.shape[:2]
-    common_webcam_res = [(1280, 720), (1920, 1080), (640, 480)]
+    # Standard Webcam/Integrated Sensor sizes
+    common_webcam_res = [
+        (640, 480), (1280, 720), (1280, 960), 
+        (1600, 1200), (1920, 1080), (2048, 1536)
+    ]
     if (w, h) in common_webcam_res or (h, w) in common_webcam_res:
+        score += 0.3 # Increased weight for standard sensor matches
+    
+    # Low megapixels check (Webcams/Front cameras rarely exceed 3-5MP)
+    # If the image is < 3MP and has no professional EXIF, it's highly likely a low-end sensor
+    mp = (w * h) / 1_000_000
+    if mp < 3.0:
         score += 0.2
         
     return min(1.0, score)
