@@ -103,8 +103,10 @@ def analyze(image_np, mode='image'):
         
         # Spectral flatness — AI video frames are often flatter than natural ones.
         if spectral_flatness > 0.95:
-            score += 15
+            score += 25
         elif spectral_flatness > 0.85:
+            score += 15
+        elif spectral_flatness > 0.60:
             score += 8
     else:
         # IMAGE MODE: DSLR/phone photos with JPEG compression

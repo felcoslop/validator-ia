@@ -253,6 +253,13 @@ def analyze_video(file_path, eval_id, selected_indices=None):
                 ('hv_score', hv_score),
                 ('texture', texture),
             ]
+            # Add video metadata analysis
+            try:
+                meta_result = metadata.analyze_video(file_path)
+                full_module_results.append(meta_result)
+            except Exception as e:
+                full_module_results.append(_error_result('metadata', str(e)))
+
             for name, mod in heuristic_modules:
                 try:
                     # Pass mode='video' to analyzers that support it

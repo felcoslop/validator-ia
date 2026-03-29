@@ -181,3 +181,97 @@ def analyze(image_path):
         'visualization': None,
         'icon': '🔍'
     }
+
+
+def analyze_video(file_path):
+    """
+    Extract and analyze video container metadata using ffprobe.
+    """
+    import subprocess
+    import json
+    import os
+
+    ffprobe_path = r"c:\Users\manu_\Downloads\projeto_village\Sender MiniCraques\ffmpeg\ffmpeg-8.0-essentials_build\bin\ffprobe.exe"
+    
+    # Fallback if ffprobe isn't there
+    if not os.path.exists(ffprobe_path):
+        return {
+            'name': 'metadata',
+            'score': 0,
+            'details': {
+                'format': 'N/A',
+                'dimensions': 'N/A',
+                'mode': 'N/A',
+                'camera_make': 'N/A',
+                'software': 'N/A',
+                'total_exif_tags': 0,
+                'findings': [{'key': 'finding_meta_no_exif'}]
+            },
+            'icon': 'search-mod'
+        }
+
+    try:
+        cmd = [
+            ffprobe_path, 
+            "-v", "quiet", 
+            "-print_format", "json", 
+            "-show_format", 
+            "-show_streams", 
+            file_path
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        data = json.loads(result.stdout)
+        
+        fmt = data.get('format', {})
+        streams = data.get('streams', [])
+        video_stream = next((s for s in streams if s.get('codec_type') == 'video'), {})
+        
+        tags = fmt.get('tags', {})
+        v_tags = video_stream.get('tags', {})
+        all_tags = {**tags, **v_tags}
+        
+        software = all_tags.get('encoder') or all_tags.get('compatible_brands') or all_tags.get('major_brand', 'N/A')
+        make = all_tags.get('make') or all_tags.get('com.apple.quicktime.make') or 'Unknown'
+        model = all_tags.get('model') or all_tags.get('com.apple.quicktime.model') or ''
+        
+        # Scoring video metadata
+        score = 0
+        findings = []
+        
+        is_ai_software = any(marker in str(software).lower() for marker in AI_SOFTWARE_MARKERS)
+        if is_ai_software:
+            score += 50
+            findings.append({'key': 'finding_meta_software', 'software': software})
+            
+        if not tags and not v_tags:
+            score += 10
+            findings.append({'key': 'finding_meta_no_exif'})
+            
+        if any(brand in make.lower() for brand in CAMERA_BRANDS):
+            score -= 15
+            findings.append({'key': 'finding_meta_camera', 'camera': make, 'model': model})
+            
+        if not findings:
+            findings.append({'key': 'finding_meta_natural'})
+            
+        return {
+            'name': 'metadata',
+            'score': min(100, max(0, score)),
+            'details': {
+                'format': fmt.get('format_long_name', 'MPEG-4').split('/')[0],
+                'dimensions': f"{video_stream.get('width')}x{video_stream.get('height')}",
+                'mode': video_stream.get('pix_fmt', 'yuv420p'),
+                'camera_make': make,
+                'software': software,
+                'total_exif_tags': len(all_tags),
+                'findings': findings
+            },
+            'icon': 'search-mod'
+        }
+    except Exception as e:
+        return {
+            'name': 'metadata',
+            'score': 0,
+            'details': {'findings': [f'Error: {str(e)}']},
+            'icon': 'search-mod'
+        }

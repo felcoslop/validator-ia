@@ -202,18 +202,45 @@
                             <span>{{ _(mod.name) }}</span>
                         </div>
                         <span class="score-pill" style="background: {% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}#f1f5f9{% endif %}; color: {{ 'white' if mod.score > 30 else 'var(--text-muted)' }};">
-                            {{ mod.score|int if mod.name == 'temporal' else '' }}
+                            {{ mod.score|int if mod.name != 'metadata' else '' }}
                         </span>
                     </div>
                     
                     {% if mod.name == 'metadata' %}
-                    <div style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #fafafa;">
-                        {% for info in mod.details.camera_info %}
-                        <div>
-                            <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">{{ _(info.key) }}</div>
-                            <div style="font-weight:600; color:var(--text-dark);">{{ info.value }}</div>
+                    <div class="meta-section-grid">
+                        <div class="meta-group">
+                            <div class="meta-group-title"><svg width="12" height="12"><use href="#icon-file-text"/></svg> {{ _('file_info') }}</div>
+                            <div class="meta-item"><span class="meta-label">{{ _('format') }}</span><span class="meta-value">{{ mod.details.format }}</span></div>
+                            <div class="meta-item"><span class="meta-label">{{ _('dimensions') }}</span><span class="meta-value">{{ mod.details.dimensions }}</span></div>
+                            <div class="meta-item"><span class="meta-label">{{ _('mode') }}</span><span class="meta-value">{{ mod.details.mode }}</span></div>
                         </div>
-                        {% endfor %}
+                        <div class="meta-group">
+                            <div class="meta-group-title"><svg width="12" height="12"><use href="#icon-smartphone"/></svg> {{ _('hardware_software') }}</div>
+                            <div class="meta-item"><span class="meta-label">{{ _('make') }}</span><span class="meta-value">{{ mod.details.camera_make }}</span></div>
+                            <div class="meta-item"><span class="meta-label">{{ _('software') }}</span><span class="meta-value">{{ mod.details.software }}</span></div>
+                            <div class="meta-item"><span class="meta-label">{{ _('exif_tags') }}</span><span class="meta-value">{{ mod.details.total_exif_tags }}</span></div>
+                        </div>
+                        <div class="meta-group">
+                            <div class="meta-group-title"><svg width="12" height="12"><use href="#icon-shield"/></svg> {{ _('forensic_signatures') }}</div>
+                            <div class="meta-item"><span class="meta-label">{{ _('ai_marker') }}</span><span class="meta-value" style="color: {% if mod.details.ai_marker %}var(--red){% else %}var(--green){% endif %};">{{ mod.details.ai_marker or _('absent') }}</span></div>
+                            <div class="meta-item"><span class="meta-label">C2PA / Credentials</span><span class="meta-value">{{ _('present') if mod.details.c2pa_present else _('absent') }}</span></div>
+                            <div class="meta-item"><span class="meta-label">{{ _('gps_data') }}</span><span class="meta-value">{{ _('present') if mod.details.gps_present else _('absent') }}</span></div>
+                        </div>
+                    </div>
+                    {% elif mod.name == 'temporal' %}
+                    <div class="meta-section-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div class="meta-group">
+                            <div class="meta-group-title"><svg width="12" height="12"><use href="#icon-activity"/></svg> Stat Matrix</div>
+                            <div class="meta-item"><span class="meta-label">Frames Analyzed</span><span class="meta-value">{{ mod.details.frames_analyzed }}</span></div>
+                            <div class="meta-item"><span class="meta-label">Mean Score</span><span class="meta-value">{{ mod.details.mean_frame_score }}%</span></div>
+                            <div class="meta-item"><span class="meta-label">Variance</span><span class="meta-value">{{ mod.details.frame_score_variance }}</span></div>
+                        </div>
+                        <div class="meta-group">
+                            <div class="meta-group-title"><svg width="12" height="12"><use href="#icon-zap"/></svg> Detection Phase</div>
+                            <div class="meta-item"><span class="meta-label">Early Detection</span><span class="meta-value" style="color: {{ 'var(--red)' if mod.details.early_ai_detected else 'var(--green)' }};">{{ 'Triggered' if mod.details.early_ai_detected else 'Clean' }}</span></div>
+                            <div class="meta-item"><span class="meta-label">Sampling</span><span class="meta-value">Adaptive</span></div>
+                            <div class="meta-item"><span class="meta-label">Stability</span><span class="meta-value">Normal</span></div>
+                        </div>
                     </div>
                     {% endif %}
 
@@ -221,7 +248,7 @@
                     <ul class="findings-list">
                         {% for f in mod.details.findings %}
                         <li>
-                            <svg width="14" height="14" stroke="{% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}var(--green){% endif %}"><use href="#icon-alert-circle"/></svg>
+                            <svg width="14" height="14" stroke="{% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}var(--accent-blue){% endif %}" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                             <span>{% if f is mapping %}{{ _(f) }}{% else %}{{ f }}{% endif %}</span>
                         </li>
                         {% endfor %}

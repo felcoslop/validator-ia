@@ -1,0 +1,93 @@
+
+=========================================
+--- TESTANDO ARQUIVO: c:\Users\manu_\Downloads\detecþÒo ia\WhatsApp Video 2026-03-28 at 17.01.55.mp4 ---
+=========================================
+SCORE FINAL: 74.2
+ -> dl_classifier: 84
+ -> metadata: 0
+ -> frequency: 55.25
+ -> noise: 51.0
+ -> ela: 25
+ -> gradient: 43
+ -> statistical: 22
+ -> wavelet: 28.05
+ -> hv_score: 47.6
+ -> texture: 44
+ -> temporal: 38.4
+
+=========================================
+--- TESTANDO ARQUIVO: c:\Users\manu_\Downloads\detecþÒo ia\whatsapp_tiktok_video.mp4 ---
+=========================================
+SCORE FINAL: 69.4
+ -> dl_classifier: 76
+ -> metadata: 0
+ -> frequency: 12.75
+ -> noise: 59.5
+ -> ela: 45
+ -> gradient: 25
+ -> statistical: 21
+ -> wavelet: 56.949999999999996
+ -> hv_score: 45.9
+ -> texture: 14
+ -> temporal: 19.4
+
+=========================================
+--- TESTANDO ARQUIVO: c:\Users\manu_\Downloads\detecþÒo ia\uploads\downloaded_24a732baacad.mp4 ---
+=========================================
+SCORE FINAL: 48.7
+ -> dl_classifier: 26
+ -> metadata: 0
+ -> frequency: 15
+ -> noise: 60
+ -> ela: 25
+ -> gradient: 25
+ -> statistical: 42
+ -> wavelet: 45
+ -> hv_score: 53
+ -> texture: 14
+ -> temporal: 21.65
+
+=========================================
+--- TESTANDO ARQUIVO: c:\Users\manu_\Downloads\detecþÒo ia\uploads\c985c68563e24036b547d1fe73a2f24b_Captura_de_tela_2026-03-28_171722.png ---
+=========================================
+SCORE FINAL: 10.1
+ -> dl_classifier: 3
+ -> frequency: 30
+ -> noise: 60
+ -> ela: 25
+ -> gradient: 30
+ -> statistical: 12
+ -> wavelet: 34
+ -> hv_score: 54
+ -> texture: 36
+ -> metadata: 15
+
+=========================================
+--- TESTANDO ARQUIVO: c:\Users\manu_\Downloads\detecþÒo ia\uploads\0f10b986670a494688d48bce88899f19_Captura_de_tela_2026-03-28_155147.png ---
+=========================================
+SCORE FINAL: 52.1
+ -> dl_classifier: 36
+ -> frequency: 18
+ -> noise: 62
+ -> ela: 25
+ -> gradient: 28
+ -> statistical: 22
+ -> wavelet: 48
+ -> hv_score: 55
+ -> texture: 29
+ -> metadata: 15
+
+=========================================
+--- TESTANDO ARQUIVO: c:\Users\manu_\Downloads\detecþÒo ia\Captura de tela 2026-01-20 140028.png ---
+=========================================
+SCORE FINAL: 8.6
+ -> dl_classifier: 1
+ -> frequency: 30
+ -> noise: 63
+ -> ela: 25
+ -> gradient: 30
+ -> statistical: 13
+ -> wavelet: 31
+ -> hv_score: 52
+ -> texture: 39
+ -> metadata: 15
