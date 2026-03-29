@@ -852,10 +852,13 @@ body {
 
 /* === AD MODAL & MARKETING === */
 .ad-modal {
-    position: fixed;
-    inset: 0;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     background: rgba(15, 23, 42, 0.95);
-    z-index: 2000;
+    z-index: 9999 !important;
     display: none;
     align-items: center;
     justify-content: center;
@@ -863,7 +866,7 @@ body {
 }
 
 .ad-modal.active {
-    display: flex;
+    display: flex !important;
     animation: adFadeIn 0.3s ease;
 }
 
