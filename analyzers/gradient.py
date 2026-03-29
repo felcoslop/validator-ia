@@ -48,15 +48,17 @@ def analyze(image_np):
     score = 0
 
     # Gradient coefficient of variation
-    # AI over-smooths: grad_cv is low. Real photos have natural texture variation.
+    # AI over-smooths (low CV) or generates heavily fragmented/mangled edges (extremely high CV).
     if grad_cv < 0.3:
         score += 25  # Very over-smoothed (strong AI signal)
     elif grad_cv < 0.5:
         score += 18
     elif grad_cv < 0.8:
         score += 8
-    elif grad_cv > 5.0:
-        score += 5
+    elif grad_cv > 2.5:
+        score += 25  # Mangled, extremely sparse fragmented gradients typical of AI generation
+    elif grad_cv > 1.5:
+        score += 15
 
     # Edge coherence (AI often has overly coherent edges)
     if edge_coherence > 0.6:
@@ -203,12 +205,16 @@ def _detect_halos(magnitude, gray):
     if len(halo_vals) < 10 or len(non_halo_vals) < 10:
         return 0.0
 
-    # Halo detection: check if edge neighborhood has abnormal intensity distribution
+    # Halo detection: Synthetic halos are often perfect smooth rings (zero variance)
+    # Natural photos have texture or noise even near edges.
     halo_std = np.std(halo_vals)
-    non_halo_std = np.std(non_halo_vals)
-
-    ratio = halo_std / (non_halo_std + 1e-10)
-    return float(max(0, min(1.0, abs(1.0 - ratio) * 2)))
+    
+    if halo_std < 2.0:
+        return 1.0  # Synthetic plastic halo
+    elif halo_std < 5.0:
+        return 0.5
+    
+    return 0.0
 
 
 def _texture_regularity(magnitude):

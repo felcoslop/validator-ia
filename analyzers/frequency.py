@@ -67,7 +67,9 @@ def analyze(image_np):
     score = 0
 
     # Beta deviation from natural range (1.5-3.0 typical for natural images)
-    if beta < 1.2 or beta > 3.5:
+    if beta < 1.0 or beta > 4.5:
+        score += 35
+    elif beta < 1.2 or beta > 3.5:
         score += 25
     elif beta < 1.5 or beta > 3.0:
         score += 10
@@ -83,9 +85,11 @@ def analyze(image_np):
 
     # High frequency anomaly
     if hf_ratio > 0.15:
-        score += 15
+        score += 25
+    elif hf_ratio < 0.005:
+        score += 25  # Extremely dead HF (heavy diffusion smoothing)
     elif hf_ratio < 0.01:
-        score += 10  # Suspiciously low HF content (over-smoothed)
+        score += 15  # Suspiciously low HF content
 
     # Spectral flatness
     if spectral_flatness > 0.6:

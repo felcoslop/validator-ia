@@ -133,9 +133,11 @@
         <!-- Module Results -->
         <section style="margin-top: 48px;">
             <h2 class="section-heading">{{ _('forensic_vector_matrix') }}</h2>
+            
+            <!-- Standard Physics Modules Matrix -->
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px;">
-                {% for mod in data.modules %}
-                <div class="mod-card {% if mod.name == 'metadata' %}full-width{% endif %}">
+                {% for mod in data.modules if mod.name not in ['metadata', 'temporal'] %}
+                <div class="mod-card">
                     <div class="mc-head">
                         <div class="mc-title">
                             <svg width="18" height="18" stroke="var(--text-muted)"><use href="#icon-{{ mod.icon }}"/></svg>
@@ -189,6 +191,45 @@
                 </div>
                 {% endfor %}
             </div>
+
+            <!-- Wide Analysis Modules (Metadata & Temporal Focus) -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 16px; margin-top: 16px;">
+                {% for mod in data.modules if mod.name in ['metadata', 'temporal'] %}
+                <div class="mod-card full-width">
+                    <div class="mc-head">
+                        <div class="mc-title">
+                            <svg width="18" height="18" stroke="var(--text-muted)"><use href="#icon-{{ mod.icon }}"/></svg>
+                            <span>{{ _(mod.name) }}</span>
+                        </div>
+                        <span class="score-pill" style="background: {% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}#f1f5f9{% endif %}; color: {{ 'white' if mod.score > 30 else 'var(--text-muted)' }};">
+                            {{ mod.score|int if mod.name == 'temporal' else '' }}
+                        </span>
+                    </div>
+                    
+                    {% if mod.name == 'metadata' %}
+                    <div style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: #fafafa;">
+                        {% for info in mod.details.camera_info %}
+                        <div>
+                            <div style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">{{ _(info.key) }}</div>
+                            <div style="font-weight:600; color:var(--text-dark);">{{ info.value }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if mod.details.findings %}
+                    <ul class="findings-list">
+                        {% for f in mod.details.findings %}
+                        <li>
+                            <svg width="14" height="14" stroke="{% if mod.score > 55 %}var(--red){% elif mod.score > 30 %}var(--amber){% else %}var(--green){% endif %}"><use href="#icon-alert-circle"/></svg>
+                            <span>{% if f is mapping %}{{ _(f) }}{% else %}{{ f }}{% endif %}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
         </section>
 
         {% if data.frame_thumbnails %}
@@ -221,7 +262,7 @@
     <!-- Modal for Visualization -->
     <div id="image-modal" class="modal-overlay" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-close" onclick="closeModal()">
+            <div class="modal-close" onclick="closeModal()" style="color: #000; background: #fff; border-radius: 50%; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                 <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
             </div>
             <img id="modal-img" class="modal-img" src="" alt="Ampliação">
@@ -231,7 +272,7 @@
     <!-- QR Code Modal -->
     <div id="qr-modal" class="modal-overlay" onclick="closeQRModal()">
         <div class="modal-content" onclick="event.stopPropagation()" style="padding: 32px; text-align: center; max-width: 380px;">
-            <div class="modal-close" onclick="closeQRModal()">
+            <div class="modal-close" onclick="closeQRModal()" style="color: #000; background: #fff; border-radius: 50%; padding: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                 <svg width="18" height="18" stroke="currentColor"><use href="#icon-x"/></svg>
             </div>
             <h3 style="margin-bottom: 24px; font-weight: 700;">{{ _('validate_analysis') }}</h3>

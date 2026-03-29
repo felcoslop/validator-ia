@@ -3,8 +3,8 @@ import json
 from engine import analyze_image, analyze_video
 
 files = [
-    r"c:\Users\manu_\Downloads\WhatsApp Video 2026-03-28 at 17.01.55.mp4",
-    r"c:\Users\manu_\Downloads\detecção ia\Captura de tela 2026-01-20 140028.png"
+    r"c:\Users\manu_\Downloads\whatsapp_tiktok_video.mp4", # Fallback downloaded video or exact video if I can find it
+    r"c:\Users\manu_\Downloads\_MG_8269 (1).JPG"
 ]
 
 for f in files:
